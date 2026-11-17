@@ -1,0 +1,18 @@
+# AchieveIt CMO bot: the posting identity for the marketing agents.
+# Create at api.slack.com/apps > Create New App > From a manifest, then paste this file.
+display_information:
+  name: AchieveIt CMO
+  description: Marketing agent team. Posts briefs, review packs and findings to #marketing-cmo. Read-only, recommend-only.
+  background_color: "#006697"
+features:
+  bot_user:
+    display_name: AchieveIt CMO
+    always_online: true
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
