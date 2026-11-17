@@ -6,6 +6,7 @@
 - 2026-11-17: Goals = Marketing Budget & Performance.xlsx 2026 plan. Non-Field is the main scorecard (525 MQLs, 155 opps, $720K ARR, $244,224 budget); Field on its own line (150, 60, $180K, $100,000); All is the total (675, 215, $900K, $344,224).
 - 2026-11-17: Repo, Slack bot (AchieveIt CMO), channel #marketing-cmo (C0CJRL8KDRS) and cloud environment approved, separate from finance.
 - 2026-11-17: Coefficient feeds live (13 of 15). Feed_Status reads tabs by name (INDIRECT), so renames don't break it.
+- 2026-11-17: AchieveIt CMO Slack app live (chat:write only). Token is the AchieveIt CMO environment's network secret for slack.com; test post via shared/slack_post.py succeeded 3:17 PM MT.
 
 ## Open
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty.
