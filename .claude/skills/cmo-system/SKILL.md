@@ -22,8 +22,9 @@ Follow `CLAUDE.md` at the repo root. IDs are in `references/ids.md`; brand voice
 
 ## Definitions
 - **Lifecycle:** Prospect, MQL, SAL, SQL, Opportunity, Customer, Advocate.
-- **MQL:** hand-raiser with bottom-of-funnel intent (demo request, pricing request, product tour). Counted as "Demo Requested"
-  campaign members plus inbound leads converted. Content downloads and lead scores never count.
+- **MQL:** hand-raiser with bottom-of-funnel intent (demo request, pricing request, product tour). Counted as distinct people added
+  that month to a Salesforce campaign named `Demo - ...` or `Website - Product Tour...` (this covers the pricing request).
+  Content downloads and lead scores never count. The budget sheet's hand count runs a little lower (263 vs 282, Jan to Oct 2026).
 - **Opps:** `Type = 'New Business'`, `Attribution_Source__c = 'Inbound'`, excluding `Demo_Attribution__c = 'Field Sourced'`.
 - **Late-stage pipeline:** those inbound opps in stage Proposal or Verbal.
 - **Won / lost:** stage `5a - Closed Won` / `5b - Closed Lost`. Win rate = won / (won + lost); open opps excluded.
@@ -84,7 +85,8 @@ GA4 organic volume is undercounted (consent); use GSC for search volume until th
 
 ## Reporting calendar and timing
 - Week 1 KPIs (Jonathan; Ops pack). Week 2 attribution (Amanda; Ops and Paid). Week 3 website and SEO (Cristina, Amanda).
-  Week 4 social and brand (Amanda, Cristina). Packs post the Friday before the review Monday.
+  Week 4 social and brand (Amanda, Cristina). Packs post the Friday before the review Monday:
+  the first Friday dated the 2nd to 8th (KPIs) and the next one, 9th to 15th (attribution), covering the last complete month.
 - Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; CMO posts the weekly brief.
 - Weeks run Sunday to Saturday; calendar months; all dates America/Denver.
 - Every scheduled run finishes before 9:00 AM Eastern. Coefficient refresh 5:00 AM MT. Avoid the finance slots

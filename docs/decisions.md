@@ -8,8 +8,12 @@
 - 2026-11-17: Coefficient feeds live (13 of 15). Feed_Status reads tabs by name (INDIRECT), so renames don't break it.
 - 2026-11-17: AchieveIt CMO Slack app live (chat:write only). Token is the AchieveIt CMO environment's network secret for slack.com; test post via shared/slack_post.py succeeded 3:17 PM MT.
 - 2026-11-17: Marketing Budget & Performance.xlsx moved to Marketing Team > 00 - Key CMO Resources > Marketing Automation (new item 01IJF3MH3J7UDXQTLZMBEYDEP467WJHFJ4). Version history stays with the original on the Revenue Leadership Team site.
+- 2026-11-17: Marketing Ops agent built. Weekdays 5:35 AM MT: flags new opps that break an attribution rule (posts only when one does). KPI pack the first Friday dated 2nd-8th; attribution and performance pack the next Friday (9th-15th). Fixes are proposals; the full list posts in the Slack thread, nothing is written to Salesforce or SharePoint.
+- 2026-11-17: MQL = distinct people added to a Demo or Product Tour campaign in the month (Salesforce). Jan-Oct 2026: 282 vs 263 in the budget sheet's hand count.
 
 ## Open
+- Calendar: is "week 1" the first Monday of the month? The Ops packs assume Fridays dated 2nd-8th and 9th-15th (Jonathan).
+- Conference spend is $0 in the budget sheet for 2026, so Field cost per opp can't be measured.
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty.
 - Commercial organizations: keep excluded from the ICP or add segments that close (Jonathan, Amanda).
 - Unlabeled dashboard goal $390K / $1.2M / $4.7M (Jonathan).

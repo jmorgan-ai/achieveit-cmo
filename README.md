@@ -17,7 +17,7 @@ a customer or prospect.
 | Agent | Skill | Phase |
 |---|---|---|
 | Shared rules | `cmo-system` | 0 |
-| Marketing Ops (KPIs, attribution checks and performance, budget) | `marketing-ops` | 1 |
+| Marketing Ops (KPIs, attribution checks and performance, budget) | `marketing-ops` | 1 (built; routine in `references/routine.md`) |
 | SEO | `seo` | 1 |
 | PM (board, meetings, follow-ups) | `marketing-pm` | 1 |
 | CMO (weekly brief, monthly review) | `cmo-brief` | 1 |
@@ -30,6 +30,7 @@ a customer or prospect.
 | `CLAUDE.md` | Rules every agent follows |
 | `.claude/skills/cmo-system/` | Shared rulebook: ICP, KPI definitions, goals, attribution rules, sources of truth, voice, IDs |
 | `shared/slack_post.py` | The only way agents post to Slack |
+| `shared/capture.py` | Saves connector results to files byte for byte, so agents never retype data |
 | `docs/decisions.md` | Decisions and open items |
 
 ## Changing what agents do
