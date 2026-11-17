@@ -15,9 +15,9 @@
 | File | driveId | itemId |
 |---|---|---|
 | Marketing Data Feeds.xlsx (Marketing Team > 00 - Key CMO Resources > Marketing Automation) | `b!517zbme3nUCWuiDP161pZMpqouqlU31EusnyG0pM6AAxJ4kEJ_V-Q6xJRqJHLO24` | `01IJF3MH7JFUTNS7AE3NGLRUZMTQX56HIL` |
-| Marketing Budget & Performance.xlsx (Revenue Leadership Team > 02 - Marketing > Budget & Metrics) | `b!DyuWJCIGnku1p2AMtn1CZJN-L41B20JFlpEI8ZvjFN3iHq5lenUcQoemH1eHh_aF` | `01CGCZRCSFVABASKFB3JDKSEQHQ7ATFB6N` |
+| Marketing Budget & Performance.xlsx (Marketing Team > 00 - Key CMO Resources > Marketing Automation; moved 2026-11-17) | `b!517zbme3nUCWuiDP161pZMpqouqlU31EusnyG0pM6AAxJ4kEJ_V-Q6xJRqJHLO24` | `01IJF3MH3J7UDXQTLZMBEYDEP467WJHFJ4` |
 
-Read with the Microsoft 365 connector: `read_resource` on `file:///<driveId>/<itemId>`; `startPage`/`endPage` select sheets.
+Folder: Marketing Automation `01IJF3MHZHVQDNNTBHLNFJV5NKED245WIV`. Read with the Microsoft 365 connector: `read_resource` on `file:///<driveId>/<itemId>`; `startPage`/`endPage` select sheets.
 
 ### Marketing Data Feeds.xlsx tabs (sheet number)
 1 Setup, 2 Feed_Status, 3 GA4_Daily_Channel, 4 GA4_Monthly_Channel, 5 GA4_Landing_Pages, 6 GA4_Key_Events, 7 GSC_Daily,

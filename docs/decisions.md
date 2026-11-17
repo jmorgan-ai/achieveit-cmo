@@ -7,6 +7,7 @@
 - 2026-11-17: Repo, Slack bot (AchieveIt CMO), channel #marketing-cmo (C0CJRL8KDRS) and cloud environment approved, separate from finance.
 - 2026-11-17: Coefficient feeds live (13 of 15). Feed_Status reads tabs by name (INDIRECT), so renames don't break it.
 - 2026-11-17: AchieveIt CMO Slack app live (chat:write only). Token is the AchieveIt CMO environment's network secret for slack.com; test post via shared/slack_post.py succeeded 3:17 PM MT.
+- 2026-11-17: Marketing Budget & Performance.xlsx moved to Marketing Team > 00 - Key CMO Resources > Marketing Automation (new item 01IJF3MH3J7UDXQTLZMBEYDEP467WJHFJ4). Version history stays with the original on the Revenue Leadership Team site.
 
 ## Open
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty.
