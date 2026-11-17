@@ -30,6 +30,9 @@ NINE_MONTHS = 270
 # 2026 plan (cmo-system rulebook). Monthly = annual / 12. A new year needs a new plan here (pull request).
 # 2027 goals are not set yet; by Jonathan's 2026-11-17 decision they equal 2026 until replaced.
 PLAN_YEARS = {2026, 2027}
+# Field (conference) spend placeholder: Finance's "Field Marketing Conferences" plan (GL 73400), $75,000 a year, spread
+# evenly. Used only while the budget sheet's Conferences row is blank or 0. Jonathan, 2026-11-17: swap for actuals later.
+FIELD_PLACEHOLDER_ANNUAL = 75000
 GOALS = {
     "Non-Field": {"mqls": 525, "opps": 155, "won": 24, "arr": 720000, "budget": 244224, "cpl": 465, "cpo": 1576},
     "Field": {"mqls": 150, "opps": 60, "won": 6, "arr": 180000, "budget": 100000, "cpl": 667, "cpo": 1667},
@@ -225,6 +228,12 @@ def spend(rows, labels, months):
     return tot
 
 
+def field_spend(rows, months):
+    """Conferences row from the budget sheet when it has money; otherwise the Finance plan placeholder."""
+    v = spend(rows, ["Conferences"], months)
+    return v if v else FIELD_PLACEHOLDER_ANNUAL / 12 * len(months)
+
+
 # ---------------------------------------------------------------- pack
 def pack(a, opps_all, osdr, lost, mql, btxt):
     asof = a.asof
@@ -260,7 +269,7 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
         won = [o for o in S if o["won"] and inw(o["close"])]
         return {"mqls": sum(mq.get((y, i), 0) for i in months) if name == "Non-Field" else None,
                 "opps": sum(bool(inw(o["created"])) for o in S), "won": len(won), "arr": sum(o["amount"] for o in won),
-                "spend": spend(rows, ["Total"] if name == "Non-Field" else ["Conferences"], months), "n": len(months),
+                "spend": field_spend(rows, months) if name == "Field" else spend(rows, ["Total"], months), "n": len(months),
                 "late": [o for o in S if o["stage"] in LATE]}
 
     sc, lines = {}, []
@@ -293,8 +302,8 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
     nf = sc["Non-Field"]
     if rows is None: gaps.append(f"Budget sheet not readable (or it has no '{y} Spend' sheet yet): spend, cost per MQL and cost per opp left out")
     elif nf["spend_m"] is None: gaps.append(f"Budget sheet has no {label} spend yet: spend figures for {label} left out")
-    if rows is not None and sc["Field"]["spend_ytd"] == 0:
-        gaps.append("Conference spend is $0 in the budget sheet this year, so Field cost per opp can't be measured")
+    if spend(rows, ["Conferences"], list(ytd)) in (None, 0, 0.0):
+        gaps.append("Field spend is a placeholder: Finance's $75,000 a year conference plan spread evenly, not actuals")
     period = f"{label} and Q{q}" if m % 3 == 0 else label
     sc_text = (f":dart: *Scorecard, {period}* (Salesforce as of {asof}; spend from Marketing Budget & Performance.xlsx)\n"
                + "\n\n".join(lines)
