@@ -17,8 +17,9 @@ Follow `CLAUDE.md` at the repo root. IDs are in `references/ids.md`; brand voice
   agencies under a main state department (DOT, public health or HHS, administration).
 - **Personas:** primary = decision-makers with budget and authority (CSO, COO, strategic planning lead); secondary = people who run
   the planning process.
-- **Excluded:** commercial and nonprofit. Under review: always report Commercial on its own line (Salesforce `Market__c`), never
-  mixed into ICP figures.
+- **Excluded from campaigns and targeting:** commercial and nonprofit (decided by Jonathan 2026-11-17). Commercial that comes in
+  inbound still counts in KPIs (MQLs, opps, won) and as inbound leads; always show Commercial as its own breakdown line
+  (Salesforce `Market__c`) so ICP results can be read without it. Never recommend spend or targeting aimed at commercial.
 
 ## Definitions
 - **Lifecycle:** Prospect, MQL, SAL, SQL, Opportunity, Customer, Advocate.

@@ -28,7 +28,8 @@ WON, LOST = "5a - Closed Won", "5b - Closed Lost"
 NINE_MONTHS = 270
 
 # 2026 plan (cmo-system rulebook). Monthly = annual / 12. A new year needs a new plan here (pull request).
-PLAN_YEARS = {2026}
+# 2027 goals are not set yet; by Jonathan's 2026-11-17 decision they equal 2026 until replaced.
+PLAN_YEARS = {2026, 2027}
 GOALS = {
     "Non-Field": {"mqls": 525, "opps": 155, "won": 24, "arr": 720000, "budget": 244224, "cpl": 465, "cpo": 1576},
     "Field": {"mqls": 150, "opps": 60, "won": 6, "arr": 180000, "budget": 100000, "cpl": 667, "cpo": 1667},
@@ -290,7 +291,7 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
                  "arr_m": M["arr"], "arr_y": Y["arr"], "spend_m": M["spend"], "spend_ytd": Y["spend"],
                  "late_amt": late, "late": late_list, "qtr": W[1][1] if len(W) == 3 else None}
     nf = sc["Non-Field"]
-    if rows is None: gaps.append("Budget sheet not readable: spend, cost per MQL and cost per opp left out")
+    if rows is None: gaps.append(f"Budget sheet not readable (or it has no '{y} Spend' sheet yet): spend, cost per MQL and cost per opp left out")
     elif nf["spend_m"] is None: gaps.append(f"Budget sheet has no {label} spend yet: spend figures for {label} left out")
     if rows is not None and sc["Field"]["spend_ytd"] == 0:
         gaps.append("Conference spend is $0 in the budget sheet this year, so Field cost per opp can't be measured")
