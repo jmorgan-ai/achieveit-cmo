@@ -16,6 +16,8 @@
 - 2026-11-17 (Jonathan): 2027 goals are still being set; use the 2026 goals for 2027 until replaced. ops.py PLAN_YEARS now includes 2027; spend is left out until the budget sheet has a "2027 Spend" sheet.
 - 2026-11-17 (Jonathan): Conference spend comes from the company budget files (Finance), not the marketing budget sheet. Finance "2026-2027 Expenses_20260722.xlsx" > "Vendors and Annual": Field Marketing Conferences (GL 73400) = $120,000 in 2025, $75,000 planned for 2026 and 2027. That is a plan figure, not actuals; actuals still to be pulled from QuickBooks (GL 73400).
 
+- 2026-11-17: SEO agent built: posts the Friday before the third Monday (Search Console results, top pages, page-two queries, low-CTR pages, Semrush site audit). shared/capture.py now follows the `<persisted-output>` spill so a large sheet is never saved as a 2 KB preview.
+
 ## Open
 - Field spend for cost per opp: the budget sheet shows $0 for conferences; Finance plans $75,000 for 2026. Decide whether Ops uses plan or QuickBooks actuals (73400) once pulled.
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty. Ops uses the budget sheet Bing row and Salesforce Custom Source "Paid - Bing" meanwhile.

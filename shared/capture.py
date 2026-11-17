@@ -39,8 +39,20 @@ def result_text(content):
 
 SAVED = re.compile(r"Output has been saved to (\S+?\.txt)")
 
+PERSISTED = re.compile(r"Full output saved to:? (\S+?\.json)")
+
 def resolve(text):
     """large results are spilled to a file; follow the pointer"""
+    if "<persisted-output>" in text:
+        m = PERSISTED.search(text)
+        if not (m and os.path.exists(m.group(1))):
+            raise SystemExit("result was spilled to a file that is not readable (only a 2 KB preview is available)")
+        raw = open(m.group(1), encoding="utf-8").read()
+        try:
+            data = json.loads(raw)
+            if isinstance(data, list): return "".join(c.get("text", "") for c in data if isinstance(c, dict))
+        except ValueError: pass
+        return raw
     if text.startswith("Error: result") and "saved to" in text:
         m = SAVED.search(text)
         if m and os.path.exists(m.group(1)): return open(m.group(1), encoding="utf-8").read()

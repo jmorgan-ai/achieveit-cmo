@@ -52,8 +52,10 @@ Non-Field is marketing's main scorecard; Field on its own line; All is the total
 | Spend per $1 ARR | $0.38 | $0.34 | $0.56 |
 
 Pacing is even through the year. Non-Field: 44 MQLs, 13 opps, $60K ARR a month; 10 MQLs and 4 opps a week; late-stage
-pipeline over $325K. Field: about 12.5 MQLs, 5 opps, $15K ARR a month. The dashboards' unlabeled $390K / $1.2M / $4.7M goal
-is left out until confirmed.
+pipeline over $325K. Field: about 12.5 MQLs, 5 opps, $15K ARR a month. The Salesforce dashboards' $390K / $1.2M / $4.7M
+is a new-pipeline goal at a standard ~$30K per opp (the opp goals above); opps aren't valued when created, so it isn't tracked.
+2027 goals are not set; until Jonathan replaces them, 2027 uses the 2026 numbers. Field spend uses a $75,000 a year placeholder
+(Finance's conference plan) until actuals are pulled.
 
 ## Attribution rules (Confluence: AchieveIt Marketing Philosophy)
 Fields: `Demo_Attribution__c` (Attribution), `Attribution_Source__c` (Inbound, Outbound, Growth, Partner), `CampaignId`
