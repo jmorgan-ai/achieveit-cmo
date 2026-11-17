@@ -1,6 +1,6 @@
 ---
 name: marketing-ops
-description: Marketing Ops agent for AchieveIt. Weekdays, flags new Salesforce opps that break the attribution rules. On the Friday before the week-1 review it posts the KPI scorecard (Non-Field and Field vs the 2026 plan); on the Friday before the week-2 review it posts the attribution check (proposed fixes) and performance (results by attribution, channel economics, offers and markets). Read-only. Use when the Marketing Ops routine fires or someone asks to "run marketing ops", "check attribution" or "post the KPI pack".
+description: Marketing Ops agent for AchieveIt. Weekdays, flags new Salesforce opps that break the attribution rules. Before the first-Monday review it posts the KPI scorecard for last month (and the quarter at quarter end; Non-Field and Field vs the 2026 plan); on the Friday before the second-Monday review it posts the attribution check (proposed fixes) and performance (results by attribution, channel economics, offers and markets). Read-only. Use when the Marketing Ops routine fires or someone asks to "run marketing ops", "check attribution" or "post the KPI pack".
 ---
 
 # Marketing Ops
@@ -15,10 +15,13 @@ Set up: `R=<repo root>; S=$R/.claude/skills/marketing-ops/scripts/ops.py; C=$R/s
 `D` = today in America/Denver.
 
 ## 1. Which run
-- Every weekday: the **daily check** (step 2).
-- Also, if today is a Friday: day of month 2 to 8 = **KPI pack**; 9 to 15 = **attribution pack** (step 3).
-  The month under review is the last complete calendar month.
-- Any other day, or if someone asks for a pack by name, run the part they asked for.
+Every weekday: the **daily check** (step 2). Then `python3 $S --which D`:
+- `"part": "kpi"`: the **KPI pack** for the first-Monday review (posted the Friday before, or on the Monday itself when
+  that Friday is still in the month under review).
+- `"part": "attribution"`: the **attribution pack** for the second-Monday review (posted the Friday before).
+- `null`: no pack today.
+The period is last month (`"month"`); when last month ends a quarter, the scorecard adds the quarter. Pass
+`--month <month>` to the pack. If someone asks for a pack by name on another day, run that part for last month.
 
 ## 2. Daily check
 1. Query D (since the previous weekday) and query C for this year and the two before. Capture to `$W/in/opps.json`
@@ -32,7 +35,7 @@ Use a fresh `$W` for the pack.
 1. Queries A, B, C (three years), E and F (queries.md). Capture each to its file in `$W/in`.
    If Salesforce fails, post `:warning: Marketing Ops <part> pack did not run: Salesforce unavailable` and stop.
    If the budget sheet can't be read, carry on without `budget.txt`.
-2. `python3 $S --mode pack --part kpi|attribution --asof D --in $W/in --out $W/out`.
+2. `python3 $S --mode pack --part kpi|attribution --month <month> --asof D --in $W/in --out $W/out`.
    Exit 2 = STOP: post `:warning: Marketing Ops <part> pack stopped: <message>` and stop.
 3. Top findings. Read `$W/out/highlights.json` (ranked candidates, each with its numbers and evidence). Pick at most three
    that matter most for the Non-Field goals, and replace the line `{TOP_FINDINGS}` in `$W/out/slack/00_parent.txt` with

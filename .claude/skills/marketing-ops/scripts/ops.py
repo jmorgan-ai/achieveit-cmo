@@ -3,6 +3,7 @@
 
   python3 ops.py --mode pack --part kpi|attribution --asof 2026-11-17 [--month 2026-10] --in IN --out OUT
   python3 ops.py --mode daily --asof 2026-11-17 --in IN --out OUT
+  python3 ops.py --which 2026-11-17     -> {"part": "kpi"|"attribution"|null, "month": "2026-10", ...}
 
 Inputs (captured connector results, never retyped):
   IN/opps.json    query A (pack) or D (daily)          required
@@ -242,58 +243,62 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
     if y not in PLAN_YEARS: die(f"no goals in the rulebook for {y}; update GOALS in ops.py and the cmo-system rulebook")
     highlights, gaps = [], []
 
-    # ---- scorecard
+    # ---- scorecard: the month, the quarter when the month ends one, and the year to date
     mq = {(int(r["y"]), int(r["m"])): int(r["d"]) for r in mql}
-    def seg(name):
-        f = (lambda o: non_field(o)) if name == "Non-Field" else (lambda o: o["attr"] == "Field Sourced")
-        inmonth = lambda d: d and mstart <= d <= mend
-        inytd = lambda d: d and dt.date(y, 1, 1) <= d <= mend
+    q = (m - 1) // 3 + 1
+    windows = [(label, [m])]
+    if m % 3 == 0: windows.append((f"Q{q} {y}", [m - 2, m - 1, m]))
+    windows.append((f"YTD to {MONTHS[m-1]}", list(ytd)))
+
+    def measure(name, months):
+        f = non_field if name == "Non-Field" else (lambda o: o["attr"] == "Field Sourced")
+        lo = dt.date(y, months[0], 1)
+        hi = dt.date(y + (months[-1] == 12), months[-1] % 12 + 1, 1) - dt.timedelta(days=1)
+        inw = lambda d: d and lo <= d <= hi
         S = [o for o in opps if f(o) and not is_test(o)]
-        res = {
-            "opps_m": sum(inmonth(o["created"]) for o in S), "opps_ytd": sum(inytd(o["created"]) for o in S),
-            "won_m": [o for o in S if o["won"] and inmonth(o["close"])], "won_ytd": [o for o in S if o["won"] and inytd(o["close"])],
-            "late": [o for o in S if o["stage"] in LATE],
-        }
-        if name == "Non-Field":
-            res["mql_m"] = mq.get((y, m)); res["mql_ytd"] = sum(mq.get((y, i), 0) for i in ytd)
-            res["spend_m"] = spend(rows, ["Total"], [m]); res["spend_ytd"] = spend(rows, ["Total"], ytd)
-        else:
-            res["mql_m"] = res["mql_ytd"] = None
-            res["spend_m"] = spend(rows, ["Conferences"], [m]); res["spend_ytd"] = spend(rows, ["Conferences"], ytd)
-        return res
-    sc = {s: seg(s) for s in ("Non-Field", "Field")}
-    lines = []
-    for s, r in sc.items():
+        won = [o for o in S if o["won"] and inw(o["close"])]
+        return {"mqls": sum(mq.get((y, i), 0) for i in months) if name == "Non-Field" else None,
+                "opps": sum(bool(inw(o["created"])) for o in S), "won": len(won), "arr": sum(o["amount"] for o in won),
+                "spend": spend(rows, ["Total"] if name == "Non-Field" else ["Conferences"], months), "n": len(months),
+                "late": [o for o in S if o["stage"] in LATE]}
+
+    sc, lines = {}, []
+    for s in ("Non-Field", "Field"):
         g = GOALS[s]; mg = {x: g[x] / 12 for x in g}
-        arr_m = sum(o["amount"] for o in r["won_m"]); arr_y = sum(o["amount"] for o in r["won_ytd"])
-        rowsx = [
-            ["MQLs", r["mql_m"] if r["mql_m"] is not None else "n/a", f"{mg['mqls']:.0f}",
-             r["mql_ytd"] if r["mql_ytd"] is not None else "n/a", f"{mg['mqls']*m:.0f}"],
-            ["Opps", r["opps_m"], f"{mg['opps']:.0f}", r["opps_ytd"], f"{mg['opps']*m:.0f}"],
-            ["Won deals", len(r["won_m"]), f"{mg['won']:.1f}", len(r["won_ytd"]), f"{mg['won']*m:.0f}"],
-            ["Won ARR", k(arr_m), k(mg["arr"]), k(arr_y), k(mg["arr"] * m)],
-            ["Spend", k(r["spend_m"]) if r["spend_m"] is not None else "not entered", k(mg["budget"]),
-             k(r["spend_ytd"]) if r["spend_ytd"] is not None else "not entered", k(mg["budget"] * m)],
-        ]
+        W = [(lab, measure(s, ms)) for lab, ms in windows]
+        def cell(v, fmt=str): return "n/a" if v is None else fmt(v)
+        hdr, rws = [""], [["MQLs"], ["Opps"], ["Won deals"], ["Won ARR"], ["Spend"]]
+        for lab, r in W:
+            hdr += [lab, "Goal"]
+            rws[0] += [cell(r["mqls"]), f"{mg['mqls']*r['n']:.0f}"]
+            rws[1] += [r["opps"], f"{mg['opps']*r['n']:.0f}"]
+            rws[2] += [r["won"], f"{mg['won']*r['n']:.1f}".rstrip("0").rstrip(".")]
+            rws[3] += [k(r["arr"]), k(mg["arr"] * r["n"])]
+            rws[4] += [cell(r["spend"], k) if r["spend"] is not None else "not entered", k(mg["budget"] * r["n"])]
         if s == "Non-Field":
-            cpl = r["spend_ytd"] / r["mql_ytd"] if r["spend_ytd"] and r["mql_ytd"] else None
-            cpo = r["spend_ytd"] / r["opps_ytd"] if r["spend_ytd"] and r["opps_ytd"] else None
-            rowsx.append(["Cost per MQL (YTD)", "", "", money(cpl) if cpl else "n/a", money(g["cpl"])])
-            rowsx.append(["Cost per opp (YTD)", "", "", money(cpo) if cpo else "n/a", money(g["cpo"])])
-        late = sum(o["amount"] for o in r["late"])
-        lines.append(f"*{s}*\n" + table(["", label, "Goal", f"YTD to {MONTHS[m-1]}", "YTD goal"], rowsx)
-                     + f"\nLate-stage pipeline now (Proposal + Verbal): {k(late)} in {len(r['late'])} opps"
+            cpl, cpo = ["Cost per MQL"], ["Cost per opp"]
+            for lab, r in W:
+                cpl += [money(r["spend"] / r["mqls"]) if r["spend"] and r["mqls"] else "n/a", money(g["cpl"])]
+                cpo += [money(r["spend"] / r["opps"]) if r["spend"] and r["opps"] else "n/a", money(g["cpo"])]
+            rws += [cpl, cpo]
+        late_list = W[0][1]["late"]; late = sum(o["amount"] for o in late_list)
+        lines.append(f"*{s}*\n" + table(hdr, rws)
+                     + f"\nLate-stage pipeline now (Proposal + Verbal): {k(late)} in {len(late_list)} opps"
                      + (" (goal over $325K)" if s == "Non-Field" else ""))
-        r.update(arr_m=arr_m, arr_y=arr_y, late_amt=late)
+        M, Y = W[0][1], W[-1][1]
+        sc[s] = {"mql_m": M["mqls"], "mql_ytd": Y["mqls"], "opps_m": M["opps"], "opps_ytd": Y["opps"],
+                 "arr_m": M["arr"], "arr_y": Y["arr"], "spend_m": M["spend"], "spend_ytd": Y["spend"],
+                 "late_amt": late, "late": late_list, "qtr": W[1][1] if len(W) == 3 else None}
     nf = sc["Non-Field"]
     if rows is None: gaps.append("Budget sheet not readable: spend, cost per MQL and cost per opp left out")
     elif nf["spend_m"] is None: gaps.append(f"Budget sheet has no {label} spend yet: spend figures for {label} left out")
     if rows is not None and sc["Field"]["spend_ytd"] == 0:
         gaps.append("Conference spend is $0 in the budget sheet this year, so Field cost per opp can't be measured")
-    sc_text = (f":dart: *Scorecard, {label}* (Salesforce as of {asof}; spend from Marketing Budget & Performance.xlsx)\n"
+    period = f"{label} and Q{q}" if m % 3 == 0 else label
+    sc_text = (f":dart: *Scorecard, {period}* (Salesforce as of {asof}; spend from Marketing Budget & Performance.xlsx)\n"
                + "\n\n".join(lines)
-               + "\n_MQLs = people added to a Demo or Product Tour campaign that month (Salesforce). Opps = new business, "
-                 "Attribution Source Inbound, not Field Sourced. Won = closed won that month._")
+               + "\n_MQLs = people added to a Demo or Product Tour campaign in the period (Salesforce). Opps = new business, "
+                 "Attribution Source Inbound, not Field Sourced. Won = closed won in the period. Goals are the 2026 plan spread evenly by month._")
     for nm, actual, goal in [("opps", nf["opps_ytd"], GOALS["Non-Field"]["opps"] / 12 * m),
                              ("MQLs", nf["mql_ytd"], GOALS["Non-Field"]["mqls"] / 12 * m),
                              ("won ARR", nf["arr_y"], GOALS["Non-Field"]["arr"] / 12 * m)]:
@@ -437,15 +442,18 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
 
     # ---- write
     head = (f"Non-Field {label}: {nf['mql_m'] if nf['mql_m'] is not None else 'n/a'} MQLs (goal 44), {nf['opps_m']} opps (goal 13), "
-            f"{k(nf['arr_m'])} won ARR (goal $60K). Late-stage pipeline now {k(nf['late_amt'])} (goal over $325K).")
+            f"{k(nf['arr_m'])} won ARR (goal $60K)."
+            + (f" Q{q}: {nf['qtr']['mqls']} MQLs (goal {525/4:.0f}), {nf['qtr']['opps']} opps (goal {155/4:.0f}), "
+               f"{k(nf['qtr']['arr'])} won ARR (goal $180K)." if nf["qtr"] else "")
+            + f" Late-stage pipeline now {k(nf['late_amt'])} (goal over $325K).")
     fix_line = (f"Attribution: {len(fixes)} opp fixes" + (f" plus one bulk update ({osdr_blank} OSDR opps with no Attribution Source)" if osdr_blank else "")
                 + " proposed for Amanda.")
     if a.part == "kpi":
-        parent = f":dart: *Marketing KPIs, {label}* (for the week-1 review)\n{head}\n{{TOP_FINDINGS}}\nScorecard in thread."
+        parent = f":dart: *Marketing KPIs, {period}* (for the first-Monday review)\n{head}\n{{TOP_FINDINGS}}\nScorecard in thread."
         posts = {"00_parent.txt": parent, "01_scorecard.txt": sc_text}
         keep = {"pace", "late", "winrate"}
     else:
-        parent = (f":mag: *Attribution and performance, {label}* (for the week-2 review)\n{{TOP_FINDINGS}}\n{fix_line} "
+        parent = (f":mag: *Attribution and performance, {period}* (for the second-Monday review)\n{{TOP_FINDINGS}}\n{fix_line} "
                   "The fix list, results by attribution, channel economics, and offers and markets are in the thread.")
         posts = {"00_parent.txt": parent, "02_attribution.txt": "\n".join(fl)}
         for i, t in enumerate(detail): posts[f"02_attribution_{i+1:02d}.txt"] = t
@@ -484,7 +492,24 @@ def daily(a, opps, lost):
     print(json.dumps(summ))
 
 
+def which(d):
+    """What a run on date d should do. KPI pack: for the first Monday of the month, posted the Friday before when that
+    Friday is already in the new month (the month under review is closed), otherwise on the Monday itself.
+    Attribution pack: the Friday before the second Monday. Review period = last month (plus its quarter at quarter end)."""
+    first = d.replace(day=1)
+    mon1 = first + dt.timedelta(days=(0 - first.weekday()) % 7)
+    mon2 = mon1 + dt.timedelta(days=7)
+    kpi_day = mon1 - dt.timedelta(days=3) if (mon1 - dt.timedelta(days=3)).month == d.month else mon1
+    att_day = mon2 - dt.timedelta(days=3)
+    prev = first - dt.timedelta(days=1)
+    part = "kpi" if d == kpi_day else "attribution" if d == att_day else None
+    return {"date": d.isoformat(), "part": part, "month": f"{prev.year}-{prev.month:02d}", "quarter_end": prev.month % 3 == 0,
+            "kpi_day": kpi_day.isoformat(), "attribution_day": att_day.isoformat()}
+
+
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--which":
+        print(json.dumps(which(dt.date.fromisoformat(sys.argv[2])))); return
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["pack", "daily"], required=True)
     ap.add_argument("--asof", required=True, type=dt.date.fromisoformat)

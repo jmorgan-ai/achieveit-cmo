@@ -84,9 +84,10 @@ Feed freshness: read the Feed_Status tab first. Coefficient tabs have a banner i
 GA4 organic volume is undercounted (consent); use GSC for search volume until that's fixed.
 
 ## Reporting calendar and timing
-- Week 1 KPIs (Jonathan; Ops pack). Week 2 attribution (Amanda; Ops and Paid). Week 3 website and SEO (Cristina, Amanda).
-  Week 4 social and brand (Amanda, Cristina). Packs post the Friday before the review Monday:
-  the first Friday dated the 2nd to 8th (KPIs) and the next one, 9th to 15th (attribution), covering the last complete month.
+- Reviews are the Mondays of the month, each covering last month (and last quarter when last month ends one):
+  first Monday KPIs (Jonathan; Ops pack), second Monday attribution (Amanda; Ops and Paid), third Monday website and SEO
+  (Cristina, Amanda), fourth Monday social and brand (Amanda, Cristina). Packs post the Friday before the review Monday;
+  when that Friday falls before the month has closed (first Monday on the 1st to 3rd), the KPI pack posts that Monday morning.
 - Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; CMO posts the weekly brief.
 - Weeks run Sunday to Saturday; calendar months; all dates America/Denver.
 - Every scheduled run finishes before 9:00 AM Eastern. Coefficient refresh 5:00 AM MT. Avoid the finance slots
