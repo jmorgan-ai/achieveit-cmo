@@ -36,7 +36,8 @@ LI_Followers (17), each captured to `$W/in`. If LI_Posts can't be read, post `:w
      public (public dashboards page or published story). No invented quotes, results or customer moments. Where a real customer moment or quote is needed,
      write `[Cristina: add a real customer moment]` rather than making one up.
    - Local government, state agencies and public health first; never aim copy at commercial.
-   - Suggest an image or GIF idea in one line (brand colors and Poppins from voice.md); do not generate or attach images.
+   - Suggest an image or GIF idea in one line; do not generate or attach images. Follow `references/creative.md` (rules Cristina's
+     image workflow settled on: no CTA on the image, no em dashes, real logo and real product screenshots, first-comment link).
    - Close with `Draft only. Nothing is scheduled or posted. Amanda approves before anything is used.`
 4. Post the parent with `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`, keep `ts`, then each other file with `--thread-ts <ts>`.
    A post without `"ok": true`: stop posting and say so in the run line.
