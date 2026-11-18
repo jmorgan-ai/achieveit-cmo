@@ -20,8 +20,11 @@
 - 2026-11-17 (Jonathan): GA4 undercount is the CookieYes banner; nothing to fix. Use Search Console for search volume and treat GA4 traffic as undercounted.
 - 2026-11-17: SEO agent built: posts the Friday before the third Monday (Search Console results, top pages, page-two queries, low-CTR pages, Semrush site audit). shared/capture.py now follows the `<persisted-output>` spill so a large sheet is never saved as a 2 KB preview.
 - 2026-11-18: PM agent built (Mondays 5:20 AM MT): one short note from the monday.com board (done last week, focus now, needs a call). Read-only; Notion drafting and email wait for an approval path. CookieYes consent item is left on hold on purpose.
+- 2026-11-18: Paid agent built (Google Ads; Fridays 5:25 AM MT, posts the Friday before the second Monday) and Website agent built (GA4; Fridays 5:45 AM MT, posts the Friday before the third Monday). Both read-only. Google Ads spend ties to the budget sheet ($3,037 in Oct).
+- 2026-11-18: Connector reads of big feed tabs cut off near 190,000 characters, so GA4 landing pages keeps the top-traffic rows and GA4 key events only the newest ~19 days; the agents label this.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty. Jonathan to contact Coefficient. Ops uses the budget sheet Bing row and Salesforce Custom Source "Paid - Bing" meanwhile.
+- GA4 sessions are down 95% vs Oct 2025 and capture 44% of Search Console clicks; the monday item "Fix CookieYes settings for US visitors" is on hold (Jonathan decided nothing to do; revisit if GA4 matters).
 - ICP organization size outside SalesRoads thresholds (Amanda).
