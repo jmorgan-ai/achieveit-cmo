@@ -26,6 +26,9 @@
 - 2026-11-18: Content and Social agent built (Fridays 5:55 AM MT, posts the Friday before the fourth Monday): LinkedIn results plus draft post ideas for Amanda to approve. Read-only; never posts to LinkedIn. LinkedIn feed has gains only for followers and 25-character captions, so themes are judged by people.
 - 2026-11-18 (Jonathan): Everything marketing creates inherits the AchieveIt Design System (Claude Design project 18bff539-9d17-4afa-a264-a509c12a4cc7, org default). It supersedes older brand notes: green is #5FC29F and never text; no navy, blue or dark backgrounds; no blue-to-green gradient; 4px corners. voice.md and creative.md point to it. Agents can't read the design project directly (Chrome only), so key rules are copied into voice.md.
 - 2026-11-18 (Jonathan): Buffer connected (scheduled posting). Content and Social reads it read-only (full captions, image or GIF or video, reach) in the Friday pack. Scheduling approved drafts later needs a pull request naming the exact action (queue only, never publish now) and Amanda or Jonathan's Slack approval.
+- 2026-11-18: CMO brief built (Mondays 6:10 AM MT): one short note on which review is today or next week and which packs post that Friday. Read-only.
+- 2026-11-18: ICP agent built (Fridays 6:30 AM MT, posts the Friday before the second Monday): inbound opps by market, year to date vs last year, plus closed won by market from all sources. Commercial is its own line and stays out of targeting. First finding: local government has 33 inbound opps in 2026 to date and 0 won; its 5 wins came from outbound, field or referral routes.
+- 2026-11-18: Customer Marketing agent built (Fridays 6:45 AM MT, posts the Friday before the fourth Monday): government customers closed won 6+ months ago as story candidates, local government first, with a Buffer check for earlier features. Read-only; contacts no customer; public status still needs a human check.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
@@ -33,3 +36,5 @@
 - GA4 sessions are down 95% vs Oct 2025 and capture 44% of Search Console clicks; the monday item "Fix CookieYes settings for US visitors" is on hold (Jonathan decided nothing to do; revisit if GA4 matters).
 - Design system: Amanda still has to decide button text colour on #5FC29F, the product nav bar, and the product green; the system's own readme still says eyebrows are green and link hover is green (stale).
 - ICP organization size outside SalesRoads thresholds (Amanda).
+- Customer stories: no source for public case studies or press; Cristina checks each candidate. Content-touch or landing-page data per opp is not in Salesforce (ask whether Pardot stores it).
+- 2027: update conference spend in Excel and monday from Ramp spend (Jonathan).
