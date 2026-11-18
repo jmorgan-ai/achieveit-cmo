@@ -25,6 +25,7 @@
 - 2026-11-18 (Jonathan): Paid and Website suggestions may be concrete moves (shift budget between campaigns, add negative keywords, pause, add CTAs, fix tracking) but never a higher total budget; shifts are judged on Salesforce opps by channel, not platform conversions.
 - 2026-11-18: Content and Social agent built (Fridays 5:55 AM MT, posts the Friday before the fourth Monday): LinkedIn results plus draft post ideas for Amanda to approve. Read-only; never posts to LinkedIn. LinkedIn feed has gains only for followers and 25-character captions, so themes are judged by people.
 - 2026-11-18 (Jonathan): Everything marketing creates inherits the AchieveIt Design System (Claude Design project 18bff539-9d17-4afa-a264-a509c12a4cc7, org default). It supersedes older brand notes: green is #5FC29F and never text; no navy, blue or dark backgrounds; no blue-to-green gradient; 4px corners. voice.md and creative.md point to it. Agents can't read the design project directly (Chrome only), so key rules are copied into voice.md.
+- 2026-11-18 (Jonathan): Buffer connected (scheduled posting). Content and Social reads it read-only (full captions, image or GIF or video, reach) in the Friday pack. Scheduling approved drafts later needs a pull request naming the exact action (queue only, never publish now) and Amanda or Jonathan's Slack approval.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).

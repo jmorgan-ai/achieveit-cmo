@@ -9,8 +9,8 @@ Load `cmo-system` first (voice and checklist: `references/voice.md`). All number
 round or restate a number yourself, and never retype a connector result (save it with `shared/capture.py`).
 Reviewers: Amanda and Cristina (social and brand). Approver for anything public: Amanda.
 
-**Reads** Marketing Data Feeds.xlsx (LI tabs). **Writes** only Slack posts to #marketing-cmo through `shared/slack_post.py`.
-It never posts to LinkedIn, Buffer or the website; drafts are text in the Slack thread for a person to use.
+**Reads** Marketing Data Feeds.xlsx (LI tabs) and Buffer (read only: posts and their metrics). **Writes** only Slack posts to #marketing-cmo through `shared/slack_post.py`.
+It never posts to LinkedIn, Buffer or the website, and uses only Buffer's read tools (`get_account`, `list_channels`, `list_posts`, `get_post`, `get_aggregated_post_metrics`); never `create_post`, `edit_post`, `delete_post`, ideas, tags or templates. When Buffer publishing is approved it will be added by pull request; drafts are text in the Slack thread for a person to use.
 
 Set up: `R=<repo root>; S=$R/.claude/skills/content-social/scripts/social.py; C=$R/shared/capture.py; W=$(mktemp -d); mkdir -p $W/in $W/out`.
 `D` = today in America/Denver.
@@ -21,7 +21,7 @@ Set up: `R=<repo root>; S=$R/.claude/skills/content-social/scripts/social.py; C=
 
 ## 2. Data (`references/routine.md` lists the captures)
 Feed_Status (sheet 2) first; mark any LinkedIn input whose status is not OK as a gap. Then LI_Posts (15), LI_Page_Daily (16),
-LI_Followers (17), each captured to `$W/in`. If LI_Posts can't be read, post `:warning: Social pack did not run: LinkedIn feed unavailable` and stop.
+LI_Followers (17), each captured to `$W/in`. Then Buffer (`references/routine.md`): sent posts on the AchieveIt LinkedIn channel for the month, with metrics, to `$W/in/buffer_posts.json`. Buffer is optional: if it fails, mark the gap and continue. If LI_Posts can't be read, post `:warning: Social pack did not run: LinkedIn feed unavailable` and stop.
 
 ## 3. Pack
 1. `python3 $S --mode pack --month <month> --asof D --in $W/in --out $W/out`. Exit 2 = STOP: post `:warning: Social pack stopped: <message>`.
@@ -48,5 +48,5 @@ One line: `Social D: <month> pack, <n> findings, <posts> posts[, gaps: ...]`.
 ## Rules the script applies (change only by pull request)
 - Engagement rate is recomputed as (clicks + reactions + comments + shares) / impressions; the feed's own column is ignored.
 - Month totals need every day of the month in the follower and page feeds (about 90 days kept); partial months are left out and listed as a gap.
-- Captions are cut at 25 characters and post type is not in the feed, so the pack does not label themes or formats.
+- LinkedIn feed captions are cut at 25 characters. Buffer gives full captions, image, GIF or video, and reach. Posts made directly on LinkedIn (via network) show only a thumbnail in Buffer, so their image or GIF type is not reliable. Buffer has no click counts. Format comparisons need 3 or more posts per format. The pack does not label themes.
 - Follower numbers are gains only (organic and paid), not the page total.

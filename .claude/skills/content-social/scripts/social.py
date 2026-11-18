@@ -10,6 +10,8 @@ Inputs in DIR (text saved byte for byte by shared/capture.py; Coefficient tabs: 
   li_page.txt       LI_Page_Daily (about 90 days)                                                    optional
   li_followers.txt  LI_Followers (about 90 days)                                                     optional
   feed_status.txt   Feed_Status                                                                      optional
+  buffer_posts.json Buffer list_posts (AchieveIt LinkedIn channel, status sent, month, includeMetrics) optional;
+                    the raw result text; the first JSON object is used (full captions, image or GIF, reach)
 Exit 2 = a required input is missing or unreadable; message on stderr.
 """
 import argparse, calendar, datetime as dt, json, os, sys
@@ -83,6 +85,32 @@ def month_stats(posts, y, m):
             "med": sorted(p["imp"] for p in r)[len(r) // 2], "posts": r}
 
 
+def buffer_posts(path, y, m):
+    """posts from a saved Buffer list_posts result: first JSON object in the file"""
+    t = read(path)
+    if not t: return None
+    try:
+        obj, _ = json.JSONDecoder().raw_decode(t.lstrip())
+    except ValueError:
+        return None
+    out = []
+    for e in obj.get("edges", []):
+        n = e.get("node", {})
+        when = (n.get("sentAt") or n.get("dueAt") or "")[:10]
+        if not when: continue
+        d = dt.date.fromisoformat(when)
+        mt = {x["type"]: x["value"] for x in n.get("metrics", [])}
+        assets = n.get("assets") or []
+        fmt_ = "no image"
+        if assets:
+            fmt_ = "video" if assets[0].get("type") == "video" else ("GIF" if (assets[0].get("image") or {}).get("isAnimated") else "image")
+            if n.get("via") == "network" and fmt_ in ("GIF", "image"):
+                fmt_ = "image or GIF (posted directly)"  # Buffer only has a thumbnail for posts made on LinkedIn itself
+        out.append({"d": d, "text": " ".join((n.get("text") or "").split()), "imp": mt.get("impressions"),
+                    "reach": mt.get("reach"), "fmt": fmt_, "via": n.get("via"), "tags": (n.get("text") or "").count("#")})
+    return out
+
+
 def pack(a):
     y, m = map(int, a.month.split("-"))
     asof = dt.date.fromisoformat(a.asof)
@@ -144,6 +172,35 @@ def pack(a):
         quiet = [d for d in (dt.date(y, m, 1) + dt.timedelta(days=i) for i in range(calendar.monthrange(y, m)[1]))
                  if d.weekday() < 5 and d not in wk]
         if quiet: lines.append(f"Weekdays with no post: {len(quiet)} of {sum(1 for i in range(calendar.monthrange(y, m)[1]) if (dt.date(y, m, 1) + dt.timedelta(days=i)).weekday() < 5)}.")
+    bp = buffer_posts(os.path.join(a.inp, "buffer_posts.json"), y, m)
+    if bp is None:
+        gaps.append("Buffer not read: formats, full captions and reach left out")
+    else:
+        bm = [p for p in bp if p["d"].year == y and p["d"].month == m and p["imp"] is not None]
+        if bm:
+            tie = f"; the LinkedIn feed shows {cur['n']}" if cur else ""
+            lines.append(f"*From Buffer (AchieveIt LinkedIn page, {len(bm)} sent posts with metrics{tie}):*")
+            grp = {}
+            for p in bm: grp.setdefault(p["fmt"], []).append(p)
+            for k, v in sorted(grp.items(), key=lambda kv: -len(kv[1])):
+                imps = sorted(x["imp"] for x in v)
+                lines.append(f"• {k}: {len(v)} posts, median {fmt(imps[len(imps) // 2])} impressions, best {fmt(imps[-1])}")
+            nat = sum(1 for p in bm if p["via"] == "network")
+            lines.append(f"{len(bm) - nat} scheduled through Buffer, {nat} posted straight on LinkedIn.")
+            top = sorted(bm, key=lambda p: -p["imp"])[:3]
+            lines.append("*Top posts, full text (Buffer):*")
+            for p in top:
+                lines.append(f"• {p['d']}: \"{p['text'][:90]}\" {fmt(p['imp'])} imp, {fmt(p['reach'] or 0)} reach, {p['fmt']}")
+            big = [(k, v) for k, v in grp.items() if len(v) >= 3]
+            if len(big) >= 2:
+                med = {k: sorted(x["imp"] for x in v)[len(v) // 2] for k, v in big}
+                hi, lo = max(med, key=med.get), min(med, key=med.get)
+                hl.append({"id": "li_format", "rank": 6,
+                           "text": f"{hi} posts had a median of {fmt(med[hi])} impressions vs {fmt(med[lo])} for {lo} posts in {label} "
+                                   f"({len(grp[hi])} and {len(grp[lo])} posts).",
+                           "evidence": f"Buffer list_posts, AchieveIt LinkedIn channel, sent in {label}, metrics as of the latest refresh"})
+        else:
+            gaps.append(f"Buffer returned no sent posts with metrics for {label}")
     # followers
     fol = table(read(os.path.join(a.inp, "li_followers.txt")), ("Date",))
     if fol:
@@ -179,7 +236,8 @@ def pack(a):
             gaps.append(f"LI_Page_Daily covers part of {label}: page views left out")
     else:
         gaps.append("LI_Page_Daily not read: page views left out")
-    gaps.append("LinkedIn captions are cut at 25 characters and post type (image, video, link) is not in the feed; themes are judged from the full posts by Cristina and Amanda")
+    if bp is None: gaps.append("LinkedIn feed captions are cut at 25 characters; themes are judged from the full posts by Cristina and Amanda")
+    gaps.append("Buffer has no click counts; clicks come from the LinkedIn feed")
     out = os.path.join(a.out, "slack"); os.makedirs(out, exist_ok=True)
     gap_t = ("\n:warning: " + "; ".join(gaps)) if gaps else ""
     head = f":speech_balloon: *Social and brand, {label}* (as of {asof}; review Monday)\n{{TOP_FINDINGS}}\n" + "\n".join(lines[:2]) + gap_t
