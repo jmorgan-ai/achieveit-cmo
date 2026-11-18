@@ -149,13 +149,22 @@ def pack(a):
             hl.append({"id": "budget_limited", "rank": lost * 100,
                        "text": f"{short(k)} loses {lost*100:.0f}% of its search impressions to budget in {label} ({money(c['cost'])} spent, {c['clk']:,.0f} clicks).",
                        "evidence": f"{ev}, campaign {k}, impression-weighted Search Budget Lost Impression Share"})
+    # mix: spend share vs click share for the priciest enabled non-brand campaign
+    nb = {k: c for k, c in camps.items() if BRAND not in k and c["status"] == "ENABLED" and c["clk"] > 0}
+    if len(nb) >= 2 and tc > 0 and clk > 0:
+        k, c = max(nb.items(), key=lambda kv: kv[1]["cost"] / kv[1]["clk"])
+        acct = tc / clk
+        hl.append({"id": "mix", "rank": (c["cost"] / c["clk"]) / acct * 10,
+                   "text": f"{short(k)} is {c['cost']/tc*100:.0f}% of {label} spend but {c['clk']/clk*100:.0f}% of clicks at {cpc(c['cost']/c['clk'])} a click, against {cpc(acct)} across the account. Platform conversions are too few to rank campaigns on, so judge any shift on Salesforce opps by channel.",
+                   "evidence": f"{ev}, campaign {k}"})
     # search terms
     terms = table(read(os.path.join(a.inp, "gads_terms.txt")))
     if terms:
         tlo, thi = min(pdate(r["Date"]) for r in terms), max(pdate(r["Date"]) for r in terms)
-        agg = {}
+        agg = {}; adg = {}
         for r in terms:
             if BRAND in r["Campaign Name"]: continue
+            adg[(r["Campaign Name"], r["Search Term View Search Term"])] = r.get("Ad Group Name", "")
             t = agg.setdefault((r["Campaign Name"], r["Search Term View Search Term"]), [0, 0, 0.0, 0.0])
             t[0] += f(r["Impressions"]); t[1] += f(r["Clicks"]); t[2] += f(r["Cost Micros"]); t[3] += f(r["Conversions"])
         waste = sorted([(k, v) for k, v in agg.items() if v[3] == 0 and v[2] >= TERM_MIN_COST], key=lambda kv: -kv[1][2])
@@ -163,10 +172,10 @@ def pack(a):
             lines.append(f"*Search terms with {money(TERM_MIN_COST)}+ spend and no platform conversion, {tlo} to {thi} (non-brand):*")
             for (camp, term), v in waste[:5]:
                 lines.append(f"• \"{term}\" {money(v[2])}, {v[1]:,.0f} clicks ({short(camp)})")
-            (camp, term), v = waste[0]
             tot = sum(v2[2] for _, v2 in waste)
+            top3 = "; ".join(f"\"{t}\" {money(v2[2])} ({v2[1]:,.0f} clicks, {short(c)} / {adg[(c, t)]})" for (c, t), v2 in waste[:3])
             hl.append({"id": "terms", "rank": tot / 10,
-                       "text": f"{len(waste)} non-brand search terms spent {money(tot)} with no platform conversion in {tlo} to {thi}; the biggest is \"{term}\" at {money(v[2])} ({v[1]:,.0f} clicks).",
+                       "text": f"{len(waste)} non-brand search terms spent {money(tot)} with no platform conversion in {tlo} to {thi}. Biggest: {top3}.",
                        "evidence": f"Google Ads, GAds_Search_Terms, {tlo} to {thi}"})
     else:
         gaps.append("GAds_Search_Terms not read: search term review left out")

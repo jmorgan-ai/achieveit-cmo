@@ -22,6 +22,7 @@
 - 2026-11-18: PM agent built (Mondays 5:20 AM MT): one short note from the monday.com board (done last week, focus now, needs a call). Read-only; Notion drafting and email wait for an approval path. CookieYes consent item is left on hold on purpose.
 - 2026-11-18: Paid agent built (Google Ads; Fridays 5:25 AM MT, posts the Friday before the second Monday) and Website agent built (GA4; Fridays 5:45 AM MT, posts the Friday before the third Monday). Both read-only. Google Ads spend ties to the budget sheet ($3,037 in Oct).
 - 2026-11-18: Connector reads of big feed tabs cut off near 190,000 characters, so GA4 landing pages keeps the top-traffic rows and GA4 key events only the newest ~19 days; the agents label this.
+- 2026-11-18 (Jonathan): Paid and Website suggestions may be concrete moves (shift budget between campaigns, add negative keywords, pause, add CTAs, fix tracking) but never a higher total budget; shifts are judged on Salesforce opps by channel, not platform conversions.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).

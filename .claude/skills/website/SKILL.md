@@ -30,6 +30,12 @@ Set up: `R=<repo root>; S=$R/.claude/skills/website/scripts/web.py; C=$R/shared/
    A post without `"ok": true`: stop and say so in the run line.
 6. One line: `Website D: <month> pack, <n> findings, <posts> posts[, gaps: ...]`.
 
+## Recommendations (what "Suggested" may say)
+Concrete page moves are welcome: add or move a call to action (demo, product tour, pricing) on a named page; fix or check a tracking tag or
+redirect; test a form placement or headline; link a high-traffic blog page to the product tour; remove a dead path. Say which page and what to try.
+Check the monday.com 2026 Marketing Projects board first (for example "Improve placement/promotion/CTAs of product tour") and point to the
+existing item instead of suggesting a duplicate. Suggestions go to Cristina (build) and Amanda (approve); the agent changes nothing.
+
 ## Rules the script applies (change only by pull request)
 - GA4 is undercounted since the cookie banner (Jonathan, 2026-11-17: nothing to fix now). It is used for direction and page-to-page comparison only;
   MQLs come from Salesforce and search volume from Search Console. The data-health line (GA4 organic sessions as a share of Search Console clicks)

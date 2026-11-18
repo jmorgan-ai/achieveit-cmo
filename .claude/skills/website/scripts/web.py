@@ -145,6 +145,10 @@ def pack(a):
                                "text": f"Landing page {p} had {v[0]:,.0f} sessions in {label} but only {v[1]/v[0]*100:.0f}% engaged: likely a tracking or redirect issue." if p == "(not set)" else
                                        f"Landing page {p} had {v[0]:,.0f} sessions in {label} with only {v[1]/v[0]*100:.0f}% engaged.",
                                "evidence": f"Google Analytics 4, GA4_Landing_Pages, {label}, page {p}"})
+                elif v[0] >= 50 and v[2] == 0 and p.startswith("/resources/blog"):
+                    hl.append({"id": "blog_cta", "rank": v[0] / 10,
+                               "text": f"Blog page {p} had {v[0]:,.0f} sessions in {label}, {v[1]/v[0]*100:.0f}% engaged, and no key events: readers stay but nothing in the page moves them to a demo, tour or pricing.",
+                               "evidence": f"Google Analytics 4, GA4_Landing_Pages, {label}, page {p}"})
                 elif v[0] >= MIN_SESSIONS and v[2] == 0 and p.startswith(MONEY_PAGES):
                     hl.append({"id": "no_events", "rank": v[0] / 8,
                                "text": f"{p} had {v[0]:,.0f} sessions in {label} and no key events: a conversion-path check candidate.",

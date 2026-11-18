@@ -29,6 +29,13 @@ Set up: `R=<repo root>; S=$R/.claude/skills/paid/scripts/paid.py; C=$R/shared/ca
    A post without `"ok": true`: stop and say so in the run line.
 6. One line: `Paid D: <month> pack, <n> findings, <posts> posts[, gaps: ...]`.
 
+## Recommendations (what "Suggested" may say)
+Concrete moves are welcome, as long as the total spend stays where it is. Good: shift budget from one named campaign to another (say both and
+the amount or share); add named search terms as negatives (term, match type, campaign and ad group); pause a campaign or ad group; tighten
+match types; move budget from low-share days or campaigns to budget-limited ones. Not allowed: raising the total budget, or "add budget" with
+no source for it. Always say the evidence is thin when conversions are few, and base shifts on Salesforce opps by channel (Ops attribution post)
+rather than platform conversions. These stay suggestions for Amanda; the agent changes nothing.
+
 ## Rules the script applies (change only by pull request)
 - Spend, clicks and impressions are Google Ads. Platform-reported conversions are never counted as results (Salesforce is the source of truth);
   opps and won ARR by channel live in the Ops attribution post.
