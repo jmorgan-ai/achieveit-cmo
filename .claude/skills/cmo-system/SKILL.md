@@ -1,6 +1,6 @@
 ---
 name: cmo-system
-description: Shared rulebook for AchieveIt's marketing agents (ICP, KPI definitions, 2026 goals, attribution rules, sources of truth, reporting calendar, brand voice, finding format). Load first in every marketing routine (Marketing Ops, SEO, PM, Paid Media, Website and CRO, Content and Social, Product and Customer, CMO Brief) and whenever someone asks how marketing counts or attributes something.
+description: Shared rulebook for AchieveIt's marketing agents (ICP, KPI definitions, 2026 goals, attribution rules, sources of truth, reporting calendar, brand voice, finding format). Load first in every marketing routine (Marketing Ops, SEO, PM, Paid Media, Website and CRO, Content and Social, ICP, Customers, CMO Strategist, Ask CMO, Health) and whenever someone asks how marketing counts or attributes something.
 ---
 
 # AchieveIt marketing rulebook
@@ -82,6 +82,11 @@ Fields: `Demo_Attribution__c` (Attribution), `Attribution_Source__c` (Inbound, O
 | LinkedIn | LI tabs (`Engagement` column unreliable: recompute) | Buffer |
 | Projects, owners, due dates | monday.com 2026 Marketing Projects | meeting notes |
 | Meeting decisions and action items | Notion Marketing Meetings pages | memory |
+| What prospects say about how they heard of us | Salesforce Opportunity `Lead_Source_Mentioned__c` (free text from the demo form) | tracked attribution |
+| Whether we may name a customer, logo or story | Salesforce Account `PR_Status__c` | anyone's memory |
+| Public dashboards | Salesforce Account `Public_Dashboard_Available__c`, `Public_Dashboard_s__c` (link) and achieveit.com/public-dashboards | |
+| Published customer stories | achieveit.com/resources/case-studies | |
+| Open suggestions and their status | monday.com board 18440658365 "Marketing Agent Open Items" | Slack threads |
 
 Feed freshness: read the Feed_Status tab first. Coefficient tabs have a banner in row 1, headers in row 2, data from row 3.
 GA4 organic volume is undercounted (consent); use GSC for search volume until that's fixed.
@@ -91,7 +96,8 @@ GA4 organic volume is undercounted (consent); use GSC for search volume until th
   first Monday KPIs (Jonathan; Ops pack), second Monday attribution (Amanda; Ops and Paid), third Monday website and SEO
   (Cristina, Amanda), fourth Monday social and brand (Amanda, Cristina). Packs post the Friday before the review Monday;
   when that Friday falls before the month has closed (first Monday on the 1st to 3rd), the KPI pack posts that Monday morning.
-- Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; CMO posts the weekly brief.
+- Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; the CMO Strategist posts the weekly brief and keeps the open items log.
+- Weekdays: Health checks that what was due posted and nothing is paused or stale. Anytime: Ask CMO answers questions and records decisions when someone writes to the bot in #marketing-cmo.
 - Weeks run Sunday to Saturday; calendar months; all dates America/Denver.
 - Every scheduled run finishes before 9:00 AM Eastern. Coefficient refresh 5:00 AM MT. Avoid the finance slots
   (4:15, 4:40, 6:00, 6:20 AM MT).

@@ -1,6 +1,6 @@
 ---
 name: cmo-brief
-description: CMO weekly brief for AchieveIt marketing. Mondays, posts one short note to #marketing-cmo: what matters from the agents' posts last week, what needs a decision, and what is coming (reviews and packs). Read-only. Use when the CMO routine fires or someone asks for "the CMO brief" or "marketing priorities this week".
+description: Superseded by the strategist skill (2026-11-18); kept for its facts script. CMO weekly brief for AchieveIt marketing. Mondays, posts one short note to #marketing-cmo: what matters from the agents' posts last week, what needs a decision, and what is coming (reviews and packs). Read-only. Use when the CMO routine fires or someone asks for "the CMO brief" or "marketing priorities this week".
 ---
 
 # CMO brief

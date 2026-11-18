@@ -111,8 +111,26 @@ def opp(r):
         "closed": r["IsClosed"], "won": r["IsWon"], "amount": r.get("Amount") or 0.0,
         "attr": r.get("Demo_Attribution__c"), "src": r.get("Attribution_Source__c"),
         "campaign": r.get("Primary_Campaign_Source_Name__c") or "", "custom": r.get("Custom_Source__c"),
-        "market": r.get("Market__c"),
+        "market": r.get("Market__c"), "lsm": (r.get("Lead_Source_Mentioned__c") or "").strip(),
     }
+
+
+HEARD = [  # first match wins; the form field is free text, so this is a keyword read, not exact
+    ("AI assistant", ("chatgpt", "chat gpt", "copilot", "gemini", "perplexity", "claude", "ai agent", "ai research", "ai reserach", " ai ", "^ai$", "^ai ")),
+    ("Event or conference", ("booth scan", "conference", "naccho", "naco", "maco", "icma", "nysacho", "webinar", "workgroup")),
+    ("Search or internet", ("google", "search", "internet", "online", "web", "bing", "youtube", "http")),
+    ("Referral or word of mouth", ("colleague", "referr", "existing user", "boss", "president", "contact", "board", "consultant", "carahsoft", "through", "friend", "peer")),
+    ("Sales outreach", ("sales email", "email from", "cold")),
+]
+
+
+def heard_group(text):
+    t = text.lower().strip()
+    if not t: return "Not answered"
+    for name, keys in HEARD:
+        for kx in keys:
+            if (kx.startswith("^") and re.search(kx, t)) or (not kx.startswith("^") and kx in " " + t + " "): return name
+    return "Other (named an organization or free text)"
 
 
 def non_field(o):  # rulebook: inbound new business, excluding Field Sourced
@@ -450,6 +468,24 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
                + table(["Market", f"{y-1} opps", "win rate", "won ARR", f"{y} opps", "win rate", "won ARR", "open"], mk_rows)
                + "\n_Commercial is outside the ICP; reported on its own line until that decision is made._")
 
+    # ---- how prospects said they heard about us (Lead Source Mentioned form field)
+    hs = [o for o in nf_ytd]
+    groups = defaultdict(list)
+    for o in hs: groups[heard_group(o["lsm"])].append(o)
+    hr = []
+    for gname in [g for g, _ in HEARD] + ["Other (named an organization or free text)", "Not answered"]:
+        xs = groups.get(gname, [])
+        if not xs: continue
+        hr.append([gname, len(xs), sum(o["won"] for o in xs), k(sum(o["amount"] for o in xs if o["won"])), k(sum(o["amount"] for o in xs if not o["closed"]))])
+    answered = sum(len(v) for g, v in groups.items() if g != "Not answered")
+    heard_text = (f":ear: *How prospects said they heard about us* (Non-Field opps created Jan to {MONTHS[m-1]} {y}; Salesforce Lead Source Mentioned, a free-text form answer sorted by keyword)\n"
+                  + table(["Said they heard via", "Opps", "Won", "Won ARR", "Open"], hr)
+                  + f"\n{answered} of {len(hs)} opps have an answer. This is what prospects say, not tracked attribution; use it next to Custom Source, not instead of it.")
+    ai = groups.get("AI assistant", [])
+    if ai and answered:
+        highlights.append({"kind": "heard", "actual": len(ai), "of": answered,
+                           "text": f"{len(ai)} of {answered} answered Non-Field opps in {y} to date say they found us through an AI assistant ({k(sum(o['amount'] for o in ai if not o['closed']))} open, {k(sum(o['amount'] for o in ai if o['won']))} won)",
+                           "evidence": "Salesforce Opportunity.Lead_Source_Mentioned__c, keyword read"})
     # ---- write
     head = (f"Non-Field {label}: {nf['mql_m'] if nf['mql_m'] is not None else 'n/a'} MQLs (goal 44), {nf['opps_m']} opps (goal 13), "
             f"{k(nf['arr_m'])} won ARR (goal $60K)."
@@ -467,13 +503,13 @@ def pack(a, opps_all, osdr, lost, mql, btxt):
                   "The fix list, results by attribution, channel economics, and offers and markets are in the thread.")
         posts = {"00_parent.txt": parent, "02_attribution.txt": "\n".join(fl)}
         for i, t in enumerate(detail): posts[f"02_attribution_{i+1:02d}.txt"] = t
-        posts.update({"03_results.txt": res_text, "04_channels.txt": ch_text, "05_offers.txt": of_text})
-        keep = {"winrate", "channel", "attribution", "free_channel", "commercial"}
+        posts.update({"03_results.txt": res_text, "04_channels.txt": ch_text, "05_offers.txt": of_text, "06_heard.txt": heard_text})
+        keep = {"winrate", "channel", "attribution", "free_channel", "commercial", "heard"}
     if gaps: posts["00_parent.txt"] += "\n:warning: " + "; ".join(gaps)
     for fn, t in posts.items():
         open(os.path.join(a.out, "slack", fn), "w").write(t + "\n")
     highlights = [h for h in highlights if h["kind"] in keep]
-    order_kind = {"pace": 0, "late": 1, "winrate": 2, "channel": 3, "attribution": 4, "free_channel": 5, "commercial": 6}
+    order_kind = {"pace": 0, "late": 1, "winrate": 2, "channel": 3, "attribution": 4, "free_channel": 5, "commercial": 6, "heard": 7}
     highlights.sort(key=lambda h: (order_kind.get(h["kind"], 9), h.get("ratio", 0)))
     json.dump(highlights, open(os.path.join(a.out, "highlights.json"), "w"), indent=1, default=str)
     summ = {"mode": "pack", "part": a.part, "month": f"{y}-{m:02d}", "fixes": len(fixes), "osdr_source_blank": osdr_blank,

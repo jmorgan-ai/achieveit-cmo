@@ -29,6 +29,9 @@
 - 2026-11-18: CMO brief built (Mondays 6:10 AM MT): one short note on which review is today or next week and which packs post that Friday. Read-only.
 - 2026-11-18: ICP agent built (Fridays 6:30 AM MT, posts the Friday before the second Monday): inbound opps by market, year to date vs last year, plus closed won by market from all sources. Commercial is its own line and stays out of targeting. First finding: local government has 33 inbound opps in 2026 to date and 0 won; its 5 wins came from outbound, field or referral routes.
 - 2026-11-18: Customer Marketing agent built (Fridays 6:45 AM MT, posts the Friday before the fourth Monday): government customers closed won 6+ months ago as story candidates, local government first, with a Buffer check for earlier features. Read-only; contacts no customer; public status still needs a human check.
+- 2026-11-18 (Jonathan): Added a CMO Strategist (weekly; reads every pack, resolves conflicts by the source hierarchy, picks at most three focus items, owns the open items log), Ask CMO (answers questions and records approvals when someone writes to the bot in #marketing-cmo; started by a Slack listener app like the finance CFO Triage, not on a schedule), and Health (weekdays 7:05 AM MT, report-only, posts only when something is wrong, plus a Monday all-clear). Re-run of a failed pack is built but OFF (references/rerun.md). The strategist replaces the CMO brief routine; same Monday 6:10 slot.
+- 2026-11-18 (Jonathan): Open items log = monday.com board 18440658365 "Marketing Agent Open Items" (may be merged into the 2026 board later). Strategist and Ask CMO may only create items and change column values on that board; people reply in Slack and the agents record it. Approvers: Jonathan for everything, Amanda for content, paid and website; Cristina can ask and comment.
+- 2026-11-18 (Jonathan): Agents may open draft pull requests (never merge) for rule changes; they stay in the log until then. Salesforce `Lead_Source_Mentioned__c` (what the prospect says) now shows in the Ops attribution pack, sorted by keyword. Customer stories use Account `PR_Status__c` for permission and the website's customer-stories and public-dashboards pages to skip customers who already have one.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
@@ -36,5 +39,8 @@
 - GA4 sessions are down 95% vs Oct 2025 and capture 44% of Search Console clicks; the monday item "Fix CookieYes settings for US visitors" is on hold (Jonathan decided nothing to do; revisit if GA4 matters).
 - Design system: Amanda still has to decide button text colour on #5FC29F, the product nav bar, and the product green; the system's own readme still says eyebrows are green and link hover is green (stale).
 - ICP organization size outside SalesRoads thresholds (Amanda).
+- Weekly pace pulse (month-to-date MQLs, opps, ARR vs pace) is not built; the strategist watches weekly signals only. Next if wanted.
+- Amanda and Cristina left #marketing-cmo on 2026-11-17; re-invite them so reviewers see the packs.
+- Deploy the CMO Listener Slack app (slack-listener/README.md) and create the Ask CMO and Health scheduled tasks' triggers; Ask CMO needs the API trigger token.
 - Customer stories: no source for public case studies or press; Cristina checks each candidate. Content-touch or landing-page data per opp is not in Salesforce (ask whether Pardot stores it).
 - 2027: update conference spend in Excel and monday from Ramp spend (Jonathan).

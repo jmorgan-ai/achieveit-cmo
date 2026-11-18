@@ -48,6 +48,49 @@ def months_between(a, b):
     return (b.year - a.year) * 12 + (b.month - a.month) - (1 if b.day < a.day else 0)
 
 
+CLEARED = ("Can use name & logo", "Logo/news release approved")
+NAME_ONLY = ("Mention as client only",)
+ASK_FIRST = ("Approval required", "Pre-approval required")
+TEST_ACCOUNTS = ("morgan test",)
+
+
+def clearance(r):
+    v = ((r.get("Account") or {}).get("PR_Status__c")) or ""
+    if v in CLEARED: return 0, "cleared (" + v + ")"
+    if v in NAME_ONLY: return 1, "name only, no logo or story"
+    if v in ASK_FIRST: return 2, "approval needed first"
+    if v == "Cannot use": return 9, "cannot use"
+    return 3, "unknown (" + (v or "blank") + ")"
+
+
+def read_names(path):
+    """one 'Name | url' (url optional) per line; returns list of (name, url)"""
+    if not os.path.exists(path): return None
+    out = []
+    for ln in open(path, encoding="utf-8").read().splitlines():
+        ln = ln.strip()
+        if not ln: continue
+        n, _, u = ln.partition("|")
+        out.append((n.strip(), u.strip()))
+    return out
+
+
+def site_key(name):
+    n = re.sub(r",\s*[A-Za-z .]+$", "", name or "")          # drop ", CA" or ", Florida"
+    n = re.sub(r"\([^)]*\)", "", n)                         # drop "(CHIP)"
+    n = norm(n)
+    return re.sub(r"^(city|town|village|county) of ", "", n)
+
+
+def on_site(name, listing):
+    """exact match on the cleaned name only, so 'Georgia Department of ...' never matches 'Macon-Bibb County, Georgia'"""
+    if not listing: return None
+    k = site_key(name)
+    for n, u in listing:
+        if site_key(n) == k: return u or "listed"
+    return None
+
+
 def norm(s): return re.sub(r"[^a-z0-9 ]", "", (s or "").lower().replace("&", "and")).strip()
 
 
@@ -94,7 +137,14 @@ def pack(a):
     ripe = [r for r in accts if months_between(r["_close"], asof) >= MIN_MONTHS]
     young = [r for r in accts if months_between(r["_close"], asof) < MIN_MONTHS]
     prio = lambda r: 0 if r.get("Sub_Market__c") == "Local Government" else (1 if r.get("Sub_Market__c") == "State Government" else 2)
-    ripe.sort(key=lambda r: (prio(r), -(r.get("Amount") or 0)))
+    ripe = [r for r in ripe if clearance(r)[0] < 9 and norm(r["_name"]) not in TEST_ACCOUNTS]
+    stories = read_names(os.path.join(a.inp, "site_stories.txt"))
+    dashes = read_names(os.path.join(a.inp, "site_dashboards.txt"))
+    if stories is None: gaps.append("Website customer stories not read, so existing stories are not excluded")
+    else: gaps.append("The stories page loads more on a button; only the first batch is visible to the agent")
+    has_story = [r for r in ripe if on_site(r["_name"], stories)]
+    ripe = [r for r in ripe if r not in has_story]
+    ripe.sort(key=lambda r: (clearance(r)[0], prio(r), -(r.get("Amount") or 0)))
     # Buffer check
     posts = None
     bp = first_json(os.path.join(a.inp, "buffer_posts.json"), "buffer_posts.json")
@@ -107,15 +157,19 @@ def pack(a):
     feat = featured(ripe, posts) if posts else {}
     cand = ripe[:TOP_N]
     lines = [f"*Customer story candidates* (government wins closed {MIN_MONTHS}+ months ago; local government first, then state, then education and other; one per account):"]
-    lines.append("Account | sub market | closed | ARR | featured on LinkedIn in last 12 months")
+    lines.append("Account | sub market | closed | ARR | permission (Salesforce PR status) | public dashboard | featured on LinkedIn in last 12 months")
     for r in cand:
         f = feat.get(r["_name"])
         fs = ("yes: " + f[0][0]) if f else ("no" if posts else "not checked")
-        lines.append(f"• {r['_name']} | {r.get('Sub_Market__c') or 'n/a'} | {r['CloseDate']} | ${fmt(r.get('Amount') or 0)} | {fs}")
+        ac = r.get("Account") or {}
+        dsite = on_site(r["_name"], dashes)
+        dash = "yes, on site" if dsite else ("yes in Salesforce, not on site page" if ac.get("Public_Dashboard_Available__c") else "no")
+        lines.append(f"• {r['_name']} | {r.get('Sub_Market__c') or 'n/a'} | {r['CloseDate']} | ${fmt(r.get('Amount') or 0)} | {clearance(r)[1]} | {dash} | {fs}")
     if len(ripe) > TOP_N: lines.append(f"({len(ripe) - TOP_N} more government wins this old are not shown.)")
+    if has_story: lines.append(f"Already have a customer story on the website (left out): {', '.join(sorted(r['_name'] for r in has_story))}.")
     lines.append(f"Too new for a story (closed under {MIN_MONTHS} months ago): {len(young)} accounts.")
     lines.append(f"Commercial wins ({len(com)}) are not listed: commercial is not a story focus.")
-    lines.append("Every candidate needs a public check (case study, press release or their own post) and the customer's yes before anyone writes or posts. This agent contacts no one.")
+    lines.append("Salesforce PR status is the permission source. Anything other than cleared needs Amanda's or Cristina's check with the account owner before any draft; 'cannot use' accounts are left out. This agent contacts no one.")
     ev = f"Salesforce Opportunity (New Business, Closed Won), close dates through {newest}"
     lg = [r for r in ripe if r.get("Sub_Market__c") == "Local Government"]
     if cand:
@@ -124,14 +178,13 @@ def pack(a):
                    "text": f"{top['_name']} ({top.get('Sub_Market__c')}, ${fmt(top.get('Amount') or 0)} ARR, closed {top['CloseDate']}) is the first story candidate.",
                    "evidence": ev})
     hl.append({"id": "lg_pool", "rank": 9,
-               "text": f"{len(lg)} local government customers closed won 6 or more months ago and could be asked for a story; {len(ripe)} government accounts in all.",
+               "text": f"{len(lg)} local government customers closed won 6 or more months ago, have no story on the website and are not marked 'cannot use'; {len(ripe)} government accounts in all.",
                "evidence": ev})
     if posts:
         nf = [r for r in cand if r["_name"] not in feat]
         hl.append({"id": "not_featured", "rank": 8,
                    "text": f"{len(nf)} of the top {len(cand)} candidates have no LinkedIn post naming them in the last 12 months.",
                    "evidence": "Buffer sent posts, matched on account name"})
-    gaps.append("Public status not checked (no case-study or press source connected); each candidate needs a check by Cristina")
     out = os.path.join(a.out, "slack"); os.makedirs(out, exist_ok=True)
     head = f":handshake: *Customer story candidates, {label}* (as of {asof}; fourth-Monday review)\n{{TOP_FINDINGS}}\n" \
            f"{len(ripe)} government accounts closed {MIN_MONTHS}+ months ago; top {len(cand)} listed in the thread.\n:warning: " + "; ".join(gaps)

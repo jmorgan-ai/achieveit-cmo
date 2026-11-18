@@ -1,0 +1,12 @@
+{
+    "name": "CFO Triage Slack app",
+    "dockerFile": "Dockerfile",
+    "remoteUser": "slackdev",
+    "postAttachCommand": "echo 'Slack app: cd slack-app'",
+    "customizations": {
+        "vscode": {
+            "extensions": ["denoland.vscode-deno"],
+            "settings": { "deno.enablePaths": ["slack-app"] }
+        }
+    }
+}

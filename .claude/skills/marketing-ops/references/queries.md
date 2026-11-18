@@ -7,7 +7,7 @@ Every result must say `"done": true`; if not, the script stops (exit 2).
 ## A. Opps for the pack -> `in/opps.json`
 ```sql
 SELECT Id, Name, AccountId, Account.Name, CreatedDate, CloseDate, StageName, IsClosed, IsWon, Amount,
-  Demo_Attribution__c, Attribution_Source__c, Primary_Campaign_Source_Name__c, Custom_Source__c, LeadSource,
+  Demo_Attribution__c, Attribution_Source__c, Primary_Campaign_Source_Name__c, Custom_Source__c, LeadSource, Lead_Source_Mentioned__c,
   Market__c, Owner.Name
 FROM Opportunity
 WHERE Type = 'New Business' AND CreatedDate >= Y1-01-01T00:00:00Z
@@ -44,7 +44,7 @@ the run line so the query can be split (pull request).
 Same fields as A, all new-business opps:
 ```sql
 SELECT Id, Name, AccountId, Account.Name, CreatedDate, CloseDate, StageName, IsClosed, IsWon, Amount,
-  Demo_Attribution__c, Attribution_Source__c, Primary_Campaign_Source_Name__c, Custom_Source__c, LeadSource,
+  Demo_Attribution__c, Attribution_Source__c, Primary_Campaign_Source_Name__c, Custom_Source__c, LeadSource, Lead_Source_Mentioned__c,
   Market__c, Owner.Name
 FROM Opportunity
 WHERE Type = 'New Business' AND CreatedDate >= <SINCE>T12:00:00Z
