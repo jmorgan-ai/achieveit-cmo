@@ -19,6 +19,7 @@
 - 2026-11-17 (Jonathan): The $390K / $1.2M / $4.7M on the Salesforce attribution dashboards is a new-pipeline goal at a standard ~$30K per opp (13 opps a month, about 39 a quarter, about 155 a year). Opps are not valued when created, so it is not tracked; the opp goals already carry it.
 - 2026-11-17 (Jonathan): GA4 undercount is the CookieYes banner; nothing to fix. Use Search Console for search volume and treat GA4 traffic as undercounted.
 - 2026-11-17: SEO agent built: posts the Friday before the third Monday (Search Console results, top pages, page-two queries, low-CTR pages, Semrush site audit). shared/capture.py now follows the `<persisted-output>` spill so a large sheet is never saved as a 2 KB preview.
+- 2026-11-18: PM agent built (Mondays 5:20 AM MT): one short note from the monday.com board (done last week, focus now, needs a call). Read-only; Notion drafting and email wait for an approval path. CookieYes consent item is left on hold on purpose.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
