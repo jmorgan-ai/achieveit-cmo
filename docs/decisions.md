@@ -24,9 +24,11 @@
 - 2026-11-18: Connector reads of big feed tabs cut off near 190,000 characters, so GA4 landing pages keeps the top-traffic rows and GA4 key events only the newest ~19 days; the agents label this.
 - 2026-11-18 (Jonathan): Paid and Website suggestions may be concrete moves (shift budget between campaigns, add negative keywords, pause, add CTAs, fix tracking) but never a higher total budget; shifts are judged on Salesforce opps by channel, not platform conversions.
 - 2026-11-18: Content and Social agent built (Fridays 5:55 AM MT, posts the Friday before the fourth Monday): LinkedIn results plus draft post ideas for Amanda to approve. Read-only; never posts to LinkedIn. LinkedIn feed has gains only for followers and 25-character captions, so themes are judged by people.
+- 2026-11-18 (Jonathan): Everything marketing creates inherits the AchieveIt Design System (Claude Design project 18bff539-9d17-4afa-a264-a509c12a4cc7, org default). It supersedes older brand notes: green is #5FC29F and never text; no navy, blue or dark backgrounds; no blue-to-green gradient; 4px corners. voice.md and creative.md point to it. Agents can't read the design project directly (Chrome only), so key rules are copied into voice.md.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
 - Microsoft Ads Coefficient connection failing; tabs MSAds_* empty. Jonathan to contact Coefficient. Ops uses the budget sheet Bing row and Salesforce Custom Source "Paid - Bing" meanwhile.
 - GA4 sessions are down 95% vs Oct 2025 and capture 44% of Search Console clicks; the monday item "Fix CookieYes settings for US visitors" is on hold (Jonathan decided nothing to do; revisit if GA4 matters).
+- Design system: Amanda still has to decide button text colour on #5FC29F, the product nav bar, and the product green; the system's own readme still says eyebrows are green and link hover is green (stale).
 - ICP organization size outside SalesRoads thresholds (Amanda).

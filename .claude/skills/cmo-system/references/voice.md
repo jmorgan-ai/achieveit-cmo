@@ -10,8 +10,13 @@ specific, with a point of view.
   Execution (bridge the gap between planning and doing).
 - Say "strategy execution", never "strategic execution". For public entities, talk about outcomes they can defend in public, never
   commercial revenue language. Keep internal terms ("SLED", "Sub Market") out of external copy.
-- Visual: Poppins (Light 300 body, Regular 400 UI, Semibold 600 headings); green #1caf7b, blue #006697, gray #666666; orange
-  #f6b267 reserved for demo CTAs.
+- Visual: the AchieveIt Design System is the authority (Claude Design project 18bff539-9d17-4afa-a264-a509c12a4cc7, org default,
+  Amanda's edits through 2026-11-18); where this file and it disagree, it wins. Summary: Poppins (Regular body, Semibold headings);
+  blue #006697 for headings, eyebrows, links and emphasis; greys #666666 / #4C4C4C for body; marketing green #5FC29F for fills,
+  numerals and small glyphs only, never for words; backgrounds are white, a light green tint (#F2F8F5, #D2EFE5) or the white-to-mint
+  gradient. Retired: navy, the blue-to-green gradient, blue or dark backgrounds, green text. Amber and red only mark risk. Buttons and
+  fields have 4px corners (not pills); "Get a Demo" is the green button. Real product screenshots over illustration; no stock cliches,
+  no hand-drawn art. The product app has its own palette (Roboto, #1caf7b); don't use it in marketing.
 - Name a customer only if they're already public (public dashboards page or a published customer story).
 - Gating: ungate educational content; gate only proprietary research or buying-intent tools. When in doubt, ungate.
 
