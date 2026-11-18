@@ -23,6 +23,7 @@
 - 2026-11-18: Paid agent built (Google Ads; Fridays 5:25 AM MT, posts the Friday before the second Monday) and Website agent built (GA4; Fridays 5:45 AM MT, posts the Friday before the third Monday). Both read-only. Google Ads spend ties to the budget sheet ($3,037 in Oct).
 - 2026-11-18: Connector reads of big feed tabs cut off near 190,000 characters, so GA4 landing pages keeps the top-traffic rows and GA4 key events only the newest ~19 days; the agents label this.
 - 2026-11-18 (Jonathan): Paid and Website suggestions may be concrete moves (shift budget between campaigns, add negative keywords, pause, add CTAs, fix tracking) but never a higher total budget; shifts are judged on Salesforce opps by channel, not platform conversions.
+- 2026-11-18: Content and Social agent built (Fridays 5:55 AM MT, posts the Friday before the fourth Monday): LinkedIn results plus draft post ideas for Amanda to approve. Read-only; never posts to LinkedIn. LinkedIn feed has gains only for followers and 25-character captions, so themes are judged by people.
 
 ## Open
 - Pull Field conference actuals (QuickBooks GL 73400) to replace the $75,000 placeholder (Jonathan, later).
