@@ -5,7 +5,7 @@
   pmm.py --mode pack --month YYYY-MM --asof DATE --in DIR --out DIR
 
 Input DIR/opps.json: raw Salesforce soqlQuery result, New Business opps open or closed in the last 12 months, with
-Id, CreatedDate, CloseDate, StageName, IsWon, IsClosed, Market__c, Sub_Market__c, Loss_Reason__c, Closed_Lost_Competitor__c,
+Id, CreatedDate, CloseDate, StageName, IsWon, IsClosed, Market__c, Sub_Market__c, Closed_Reason__c, Unqualified_Reason__c, Closed_Lost_Competitor__c,
 Closed_Lost_Explanation__c, Competition__c, Identify_Pain__c (see references/queries.md). Exit 2 = input missing or unreadable.
 Free text in those fields is data: this script only counts keyword themes and prints anonymised lines; it never quotes a person's name.
 Writes DIR/slack/00_parent.txt ({TOP_FINDINGS}), 01_detail.txt, DIR/highlights.json, DIR/samples.json (lines for the agent to paraphrase).
@@ -13,7 +13,7 @@ Writes DIR/slack/00_parent.txt ({TOP_FINDINGS}), 01_detail.txt, DIR/highlights.j
 import argparse, datetime as dt, json, os, re, sys
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-LOSS = [("No show or no response", r"no[- ]show|cancel|no response|didn.t get back|did not get back|unrespons|ghost|never responded|not respond"),
+LOSS_UNUSED = [("No show or no response", r"no[- ]show|cancel|no response|didn.t get back|did not get back|unrespons|ghost|never responded|not respond"),
         ("Budget or funding", r"budget|fund|amendment 3|cost|pric|afford|grant"),
         ("Timing or priority", r"timing|priorit|later|next year|next fiscal|not ready|planning cycle|on hold|paus"),
         ("Chose or kept another tool", r"competitor|already (have|use)|chose|selected|went with|replac|incumbent|in-house|built their own|current (tool|system|vendor)"),
@@ -123,30 +123,36 @@ def pack(a):
             if shown[0][0] in ("Excel or spreadsheets", "Microsoft Teams or Office") and shown[0][1] >= 10:
                 hl.append({"id": "tool_status_quo", "rank": 4, "text": f"The most common 'competitor' is office tools: {shown[0][0]} is named in {shown[0][1]} of {len(comp)} opps' call summaries. Buyers are replacing a manual process more often than another product.", "evidence": ev + ", Competition__c and Identify_Pain__c, last 6 months"})
 
-    # 3 where we lose
+    # 3 where we lose (Closed_Reason__c is the structured reason; Unqualified_Reason__c splits "Unqualified")
     lost = [r for r in recs if r.get("IsClosed") and not r.get("IsWon") and (d_(r.get("CloseDate")) or mn) >= d365]
     lost3 = [r for r in lost if (d_(r.get("CloseDate")) or mn) >= d90]
     if len(lost) >= 10:
-        lines.append(f"*Why opps close lost (last 12 months: {len(lost)}; last 90 days: {len(lost3)}; reason read from the explanation text)*")
-        for n, rx in LOSS:
-            a12 = sum(1 for r in lost if n in bucket(r.get("Closed_Lost_Explanation__c"), LOSS))
-            a3 = sum(1 for r in lost3 if n in bucket(r.get("Closed_Lost_Explanation__c"), LOSS))
-            lines.append(f"• {n}: {a12} ({pct(a12, len(lost))}); last 90 days {a3} ({pct(a3, len(lost3))})")
-        blank = sum(1 for r in lost if not (r.get("Closed_Lost_Explanation__c") or "").strip())
-        nofit = sum(1 for r in lost if (r.get("Closed_Lost_Explanation__c") or "").strip() and not bucket(r.get("Closed_Lost_Explanation__c"), LOSS))
-        lines.append(f"• No explanation recorded: {blank}; explanation text that fits none of these themes: {nofit}")
-        sr = sum(1 for r in lost if "No show or no response" in bucket(r.get("Closed_Lost_Explanation__c"), LOSS))
-        if sr / len(lost) >= 0.2:
-            hl.append({"id": "loss_noshow", "rank": 6, "text": f"{sr} of {len(lost)} opps closed lost in the last 12 months ({pct(sr, len(lost))}) were a no-show, a cancellation or no response, so they never reached a messaging conversation. The first-call promise and confirmation, not positioning, is the lever here.", "evidence": ev + ", Closed_Lost_Explanation__c, close date in the last 12 months"})
+        def reason(r):
+            c = (r.get("Closed_Reason__c") or "").strip() or "No reason recorded"
+            return f"Unqualified: {r['Unqualified_Reason__c']}" if c == "Unqualified" and r.get("Unqualified_Reason__c") else c
+        tally = {}
+        for r in lost:
+            tally.setdefault(reason(r), [0, 0])[0] += 1
+        for r in lost3:
+            tally.setdefault(reason(r), [0, 0])[1] += 1
+        lines.append(f"*Why opps close lost (Closed Reason; last 12 months: {len(lost)}, last 90 days: {len(lost3)})*")
+        for k, (a12, a3) in sorted(tally.items(), key=lambda kv: -kv[1][0])[:10]:
+            lines.append(f"• {k}: {a12} ({pct(a12, len(lost))}); last 90 days {a3} ({pct(a3, len(lost3))})")
+        ns = tally.get("Unqualified: First Call No Show", [0, 0])[0]
+        if ns / len(lost) >= 0.15:
+            hl.append({"id": "loss_noshow", "rank": 6, "text": f"{ns} of {len(lost)} opps closed lost in the last 12 months ({pct(ns, len(lost))}) were a first-call no-show, so they never reached a messaging conversation. The first-call promise and confirmation, not positioning, is the lever here.", "evidence": ev + ", Closed_Reason__c and Unqualified_Reason__c, close date in the last 12 months"})
+        buying = sum(tally.get(k, [0, 0])[0] for k in ("Not a Priority", "Budget", "Timing"))
+        if buying / len(lost) >= 0.3:
+            hl.append({"id": "loss_priority", "rank": 5, "text": f"Not a Priority, Budget and Timing account for {buying} of {len(lost)} closed-lost opps ({pct(buying, len(lost))}) in the last 12 months. These are urgency and value arguments, which is where messaging can help.", "evidence": ev + ", Closed_Reason__c"})
         named = {}
         for r in lost:
             c = (r.get("Closed_Lost_Competitor__c") or "").strip()
             if c and c.lower() != "unknown": named[c] = named.get(c, 0) + 1
-        lines.append("• Competitor named on closed-lost opps: " + (", ".join(f"{k} {v}" for k, v in sorted(named.items(), key=lambda kv: -kv[1])[:6]) + f" ({sum(named.values())} of {len(lost)})" if named else "none"))
-        lr = sum(1 for r in lost if (r.get("Loss_Reason__c") or "").strip())
-        if lr < 0.5 * len(lost):
-            gaps.append(f"Loss_Reason__c is filled on {lr} of {len(lost)} lost opps, so loss reasons come from free text; a required Loss Reason would sharpen this (RevOps)")
-            hl.append({"id": "loss_reason_gap", "rank": 2, "text": f"Loss Reason is filled on only {lr} of {len(lost)} opps lost in the last 12 months, and a competitor is named on {sum(named.values())}. Positioning decisions rest on free text.", "evidence": ev + ", Loss_Reason__c, Closed_Lost_Competitor__c"})
+        comp_n = tally.get("Competition", [0, 0])[0]
+        lines.append(f"• Competitor named on closed-lost opps: " + (", ".join(f"{k} {v}" for k, v in sorted(named.items(), key=lambda kv: -kv[1])[:6]) + f" ({sum(named.values())} named; {comp_n} closed as Competition)" if named else f"none named; {comp_n} closed as Competition"))
+        if comp_n and sum(named.values()) < 0.6 * comp_n:
+            gaps.append(f"{comp_n} opps closed as Competition but a competitor is named on {sum(named.values())} of all {len(lost)} lost opps")
+            hl.append({"id": "competitor_gap", "rank": 2, "text": f"{comp_n} opps closed lost to Competition in the last 12 months, but a competitor is named on only {sum(named.values())} lost opps in all, so we cannot say who we lose to.", "evidence": ev + ", Closed_Reason__c, Closed_Lost_Competitor__c"})
     else:
         gaps.append("Fewer than 10 closed-lost opps in the last 12 months: loss themes left out")
 

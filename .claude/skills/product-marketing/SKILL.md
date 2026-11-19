@@ -28,7 +28,7 @@ Set up: `R=<repo root>; S=$R/.claude/skills/product-marketing/scripts/pmm.py; C=
 
 ## 3. Pack
 1. `python3 $S --mode pack --month <month> --asof D --in $W/in --out $W/out`. Exit 2 = STOP: post `:warning: Product Marketing pack stopped: <message>` top level.
-   It writes `00_parent.txt` (title and `{TOP_FINDINGS}`), `01_detail.txt` (buyer pains, tools used, why opps close lost), `highlights.json`, `samples.json` (anonymised lines for you to paraphrase).
+   It writes `00_parent.txt` (title and `{TOP_FINDINGS}`), `01_detail.txt` (buyer pains, tools used, why opps close lost by Closed Reason), `highlights.json`, `samples.json` (anonymised lines for you to paraphrase).
 2. Write `$W/out/slack/02_voice_and_market.txt` titled `*Voice of the buyer and the market*`, at most 8 lines:
    - Buyer wording: two or three short paraphrases of what buyers say, from `samples.json` and the Zoom summaries. Mark each `(Salesforce)` or `(Zoom)`. No names, emails or organisations.
    - Market: up to three dated, sourced items about competitors or the category, each with `Source: <title or domain>, <date>`. If nothing new in 30 days, write `No competitor or category news found in the last 30 days.`
@@ -45,6 +45,6 @@ Set up: `R=<repo root>; S=$R/.claude/skills/product-marketing/scripts/pmm.py; C=
 `Product Marketing D: <month> pack, <n> findings, <n> tests, <posts> posts[, gaps: ...]`.
 
 ## Rules the script applies (change only by pull request)
-- Themes are keyword buckets on the call-summary and explanation text (`PAIN`, `LOSS`, `TOOLS` in `pmm.py`); an opp can fall in several. Shares are of opps that have a summary.
+- Buyer pains and tools are keyword buckets on the call-summary text (`PAIN`, `TOOLS` in `pmm.py`); an opp can fall in several. Loss reasons are Salesforce's own Closed Reason (and Unqualified Reason), not text. Shares are of opps that have a summary.
 - Buyer themes need 5 or more summaries in the window; the rise highlight needs 8 or more in each window and a 15-point change.
-- Loss themes need 10 or more closed-lost opps in the last 12 months. The call summaries carry the AEs' standard framing, so read changes, not levels.
+- Loss reasons need 10 or more closed-lost opps in the last 12 months. The call summaries carry the AEs' standard framing, so read changes, not levels.
