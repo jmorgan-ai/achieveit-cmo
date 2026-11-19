@@ -1,0 +1,10 @@
+{
+  "notion_parent_id": "3fe11c28-6bb0-8058-bc7d-e4652222803a",
+  "notion_parent_name": "2026 Q4 Meetings (Marketing / Marketing Meetings / 2026 Meetings)",
+  "notion_path_prefix": "Marketing / Marketing Meetings / 2026 Meetings",
+  "slack": [
+    {"id": "C06FNDPRK6F", "name": "marketing-collab"},
+    {"id": null, "name": "marketingcrew", "note": "private; set the channel ID and invite the CMO bot, then it is read"}
+  ],
+  "days": 7
+}
