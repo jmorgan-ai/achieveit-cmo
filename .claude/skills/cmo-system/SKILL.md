@@ -1,6 +1,6 @@
 ---
 name: cmo-system
-description: Shared rulebook for AchieveIt's marketing agents (ICP, KPI definitions, 2026 goals, attribution rules, sources of truth, reporting calendar, brand voice, finding format). Load first in every marketing routine (Marketing Ops, SEO, PM, Paid Media, Website and CRO, Content and Social, ICP, Customers, CMO Strategist, Ask CMO, Health) and whenever someone asks how marketing counts or attributes something.
+description: Shared rulebook for AchieveIt's marketing agents (ICP, messaging, KPI definitions, 2026 goals, attribution rules, sources of truth, reporting calendar, brand voice, finding format). Load first in every marketing routine (Marketing Ops, SEO, PM, Paid Media, Website and CRO, Content, Product Marketing, Customers, CMO Strategist, Ask CMO, Health) and whenever someone asks how marketing counts or attributes something.
 ---
 
 # AchieveIt marketing rulebook
@@ -94,9 +94,9 @@ GA4 organic volume is undercounted (consent); use GSC for search volume until th
 ## Reporting calendar and timing
 - Reviews are the Mondays of the month, each covering last month (and last quarter when last month ends one):
   first Monday KPIs (Jonathan; Ops pack), second Monday attribution (Amanda; Ops and Paid), third Monday website and SEO
-  (Cristina, Amanda), fourth Monday social and brand (Amanda, Cristina). Packs post the Friday before the review Monday;
+  (Cristina, Amanda), fourth Monday content, social and brand (Amanda, Cristina). Packs post the Friday before the review Monday;
   when that Friday falls before the month has closed (first Monday on the 1st to 3rd), the KPI pack posts that Monday morning.
-- Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; the CMO Strategist posts the weekly brief and keeps the open items log.
+- Mondays: PM drafts the where-we-stand section of the week's Notion meeting page; the CMO Strategist posts the weekly CMO brief (6:10 AM, the one message to read; a short reply per agent links to each full pack in the Research log) and keeps the open items log.
 - Weekdays: Health checks that what was due posted and nothing is paused or stale. Anytime: Ask CMO answers questions and records decisions when someone writes to the bot in #marketing-cmo.
 - Weeks run Sunday to Saturday; calendar months; all dates America/Denver.
 - Every scheduled run finishes before 9:00 AM Eastern. Coefficient refresh 5:00 AM MT. Avoid the finance slots
@@ -111,5 +111,13 @@ GA4 organic volume is undercounted (consent); use GSC for search volume until th
 Rank by impact on the Non-Field goals. Findings about people's work go to the meeting page or the CMO brief, never as direct nudges.
 
 ## Posting
-One post per run, short parent plus detail in thread. Write the message to a file, then
-`python3 shared/slack_post.py msg.txt [--thread-ts <ts>]`.
+**One quiet channel.** #marketing-cmo has three kinds of top-level posts and nothing else: the Monday **CMO brief** (the Strategist), the week's
+**Research log** line (one short post per week, created by the first agent that posts), and `:warning:` / Health alerts.
+Every agent's pack, daily flag and detail goes in the Research log thread, so a pack is one reply, not a parent plus replies.
+- Write the message files, then post them all in one call: `python3 $R/shared/slack_post.py --weekly <file> [<file> ...]`.
+  The script finds or creates this week's Research log post, tidies spacing, joins files into as few replies as fit, and prints `"ok": true` per reply.
+- First line of a pack = its title: `:emoji: *<Agent title>, <month or week>*`. Keep the title strings in each skill; the Strategist and Health find packs by them.
+- If it prints `weekly_lookup_failed` (exit 3), do not post another way. Read the channel for the week (`slack_read_channel`), find the bot post whose text contains the
+  `marker` it printed, and post with `--thread-ts <that ts>`; if none exists, post with `--weekly-create`. If channel reading also fails, say so in the run line and stop.
+- Failures (`:warning: ... did not run`) are the exception: post them top level, without `--weekly`, so someone sees them.
+- Findings read best short: a title, then at most three bullets `• what. so what. Suggested: owner and next step.`, then details. Blank lines are added for you.

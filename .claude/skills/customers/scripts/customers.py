@@ -178,7 +178,7 @@ def pack(a):
                    "text": f"{top['_name']} ({top.get('Sub_Market__c')}, ${fmt(top.get('Amount') or 0)} ARR, closed {top['CloseDate']}) is the first story candidate.",
                    "evidence": ev})
     hl.append({"id": "lg_pool", "rank": 9,
-               "text": f"{len(lg)} local government customers closed won 6 or more months ago, have no story on the website and are not marked 'cannot use'; {len(ripe)} government accounts in all.",
+               "text": f"{len(lg)} local government customers closed won 6 or more months ago, {'have no story on the website and ' if stories is not None else 'were not checked against the website stories (not read), and '}are not marked 'cannot use'; {len(ripe)} government accounts in all.",
                "evidence": ev})
     if posts:
         nf = [r for r in cand if r["_name"] not in feat]
@@ -187,7 +187,7 @@ def pack(a):
                    "evidence": "Buffer sent posts, matched on account name"})
     out = os.path.join(a.out, "slack"); os.makedirs(out, exist_ok=True)
     head = f":handshake: *Customer story candidates, {label}* (as of {asof}; fourth-Monday review)\n{{TOP_FINDINGS}}\n" \
-           f"{len(ripe)} government accounts closed {MIN_MONTHS}+ months ago; top {len(cand)} listed in the thread.\n:warning: " + "; ".join(gaps)
+           f"{len(ripe)} government accounts closed {MIN_MONTHS}+ months ago; top {len(cand)} listed below." + (("\n:warning: " + "; ".join(gaps)) if gaps else "")
     open(os.path.join(out, "00_parent.txt"), "w").write(head)
     open(os.path.join(out, "01_detail.txt"), "w").write("*Detail*\n" + "\n".join(lines))
     json.dump(sorted(hl, key=lambda h: -h["rank"]), open(os.path.join(a.out, "highlights.json"), "w"), indent=1)

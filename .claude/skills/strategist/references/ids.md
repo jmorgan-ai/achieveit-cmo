@@ -11,7 +11,7 @@ never change the board's structure.
 | Status | `color_mm976x05` | Open, Accepted, In progress, Done, Declined, Stale, Needs decision, Parked |
 | Kind | `color_mm97y5f3` | Recommendation, Rule change, Data gap, Question, Conflict |
 | Owner | `multiple_person_mm97hsta` | people column |
-| Source agent | `text_mm97y1ns` | Paid, Website, SEO, Ops, ICP, Customers, Content, Strategist, Health |
+| Source agent | `text_mm97y1ns` | Paid, Website, SEO, Ops, Product Marketing, Customers, Content, Strategist, Health |
 | Raised | `date_mm97ppk7` | |
 | Review by | `date_mm97s6vh` | raised + 14 days unless the pack says sooner |
 | Evidence | `long_text_mm9771m7` | source, record, value, as-of date |

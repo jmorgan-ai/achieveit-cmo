@@ -24,7 +24,7 @@ Then the Buffer `list_posts` capture to `$W/in/buffer_posts.json`; if Buffer fai
 2. Top findings: from `$W/out/highlights.json` pick at most three; replace `{TOP_FINDINGS}` in `00_parent.txt` with one bullet each:
    `• <what, using the candidate's numbers>. <so what for social and content>. Suggested: <owner and next step>.` Owner: Cristina (permission check with the account owner, story draft), Amanda (approval). Only numbers from the candidate's `text`.
    Next step starts with the permission shown in the pack (PR status); never "email the customer" or "ask the customer" as something the agent does.
-3. Post the parent with `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`, keep `ts`, then `01_detail.txt` with `--thread-ts <ts>`. No `"ok": true`: stop and say so.
+3. Post with `python3 $R/shared/slack_post.py --weekly $W/out/slack/00_parent.txt $W/out/slack/01_detail.txt` (one reply in the week's Research log thread; see cmo-system, Posting). No `"ok": true`: stop and say so.
 
 ## 4. Finish
 `Customers D: <month> pack, <n> candidates, <posts> posts[, gaps: ...]`.

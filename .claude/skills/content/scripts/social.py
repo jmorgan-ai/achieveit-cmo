@@ -240,11 +240,10 @@ def pack(a):
     gaps.append("Buffer has no click counts; clicks come from the LinkedIn feed")
     out = os.path.join(a.out, "slack"); os.makedirs(out, exist_ok=True)
     gap_t = ("\n:warning: " + "; ".join(gaps)) if gaps else ""
-    head = f":speech_balloon: *Social and brand, {label}* (as of {asof}; review Monday)\n{{TOP_FINDINGS}}\n" + "\n".join(lines[:2]) + gap_t
-    open(os.path.join(out, "00_parent.txt"), "w").write(head)
-    open(os.path.join(out, "01_detail.txt"), "w").write("*Detail*\n" + "\n".join(lines))
-    json.dump(sorted(hl, key=lambda h: -h["rank"]), open(os.path.join(a.out, "highlights.json"), "w"), indent=1)
-    print(json.dumps({"mode": "pack", "month": a.month, "highlights": len(hl), "gaps": gaps, "posts": 2}))
+    open(os.path.join(out, "20_social.txt"), "w").write(f"*Social (LinkedIn), {label}*\n" + "\n".join(lines) + gap_t)
+    json.dump(sorted(hl, key=lambda h: -h["rank"]), open(os.path.join(a.out, "highlights_social.json"), "w"), indent=1)
+    a.social_label, a.social_gaps = label, gaps
+    return {"highlights": len(hl), "gaps": gaps}
 
 
 if __name__ == "__main__":

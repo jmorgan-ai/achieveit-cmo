@@ -25,7 +25,7 @@ Set up: `R=<repo root>; S=$R/.claude/skills/paid/scripts/paid.py; C=$R/shared/ca
 4. Top findings: read `$W/out/highlights.json`; pick at most three and replace the line `{TOP_FINDINGS}` in `$W/out/slack/00_parent.txt` with one
    bullet each: `• <what, using the candidate's own numbers>. <so what for the goal>. Suggested: <Amanda and the next step>.` Only numbers from the
    candidate's `text`. No candidates = delete the line. Edit the file with Python; do not retype the rest.
-5. Post the parent with `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`, keep `ts`, then `01_detail.txt` with `--thread-ts <ts>`.
+5. Post with `python3 $R/shared/slack_post.py --weekly $W/out/slack/00_parent.txt $W/out/slack/01_detail.txt` (one reply in the week's Research log thread; see cmo-system, Posting).
    A post without `"ok": true`: stop and say so in the run line.
 6. One line: `Paid D: <month> pack, <n> findings, <posts> posts[, gaps: ...]`.
 

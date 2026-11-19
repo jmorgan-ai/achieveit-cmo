@@ -2,7 +2,7 @@
 """Health check numbers. Which posts were due, which tasks failed, which feeds are stale: all decided here.
 
   health.py check --asof DATE --channel FILE [--triggers FILE] [--feeds FILE] [--known known.json] --out DIR
-     channel  = saved Slack read of #marketing-cmo (last 2 days)
+     channel  = saved Slack read of #marketing-cmo (last 2 days); with --threads DIR, replies saved there as thread_<ts>.json count too
      triggers = saved list_triggers result (scheduled tasks, with last_run)
      feeds    = saved read of Feed_Status (sheet 2)
      known    = optional JSON list of keys already on the open items log, e.g. ["data-msads-feed"]
@@ -15,16 +15,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TASKS = {  # scheduled task name -> trigger id
     "Marketing Ops": "trig_01K2Xx1kTeSjPvQ6H9iStoj6", "SEO - Friday pack": "trig_01T6ScY3MofkEeQVWSmW14ZU",
     "PM - Monday note": "trig_013jSdfYdyKM3saKXfXLWnH6", "Paid - Friday pack": "trig_01MuJd79dgwF5fEckbz2FcCF",
-    "Website - Friday pack": "trig_01Wv98FKuWvx6acfjtzRqy9a", "Content and Social - Friday pack": "trig_01YY7gN6FCwsWHf348ztUdCZ",
-    "CMO - Monday brief": "trig_01B4T3M1pR5pX84YrnMJjmGx", "ICP - Friday pack": "trig_01Xcki5iUQewftM8ryrjyZQN",
+    "Website - Friday pack": "trig_01Wv98FKuWvx6acfjtzRqy9a", "Content - Friday pack": "trig_01YY7gN6FCwsWHf348ztUdCZ",
+    "CMO - Monday brief": "trig_01B4T3M1pR5pX84YrnMJjmGx", "Product Marketing - Friday pack": "trig_01Xcki5iUQewftM8ryrjyZQN",
     "Customers - Friday pack": "trig_01DJKGsXR3Ev2v3uyJZei4KF"}
 # agent label -> (text its post starts with, scheduled task that makes it)
 POSTS = {"Ops KPI pack": ("*Marketing KPIs", "Marketing Ops"), "Ops attribution pack": ("*Attribution and performance", "Marketing Ops"),
-         "Paid pack": ("*Paid,", "Paid - Friday pack"), "ICP pack": ("*ICP fit", "ICP - Friday pack"),
-         "SEO pack": ("*Website and SEO", "SEO - Friday pack"), "Website pack": ("*Website,", "Website - Friday pack"),
-         "Social pack": ("*Social and brand", "Content and Social - Friday pack"), "Customers pack": ("*Customer story candidates", "Customers - Friday pack"),
-         "PM note": ("*Marketing, week of", "PM - Monday note"), "CMO brief": (":compass: *Marketing, week of", "CMO - Monday brief")}
-FRIDAY_PACKS = {1: ["Ops KPI pack"], 2: ["Ops attribution pack", "Paid pack", "ICP pack"], 3: ["SEO pack", "Website pack"], 4: ["Social pack", "Customers pack"]}
+         "Paid pack": ("*Paid,", "Paid - Friday pack"), "Product marketing pack": ("*Product marketing,", "Product Marketing - Friday pack"),
+         "SEO pack": ("*SEO,", "SEO - Friday pack"), "Website pack": ("*Website,", "Website - Friday pack"),
+         "Content pack": ("*Content and social,", "Content - Friday pack"), "Customers pack": ("*Customer story candidates", "Customers - Friday pack"),
+         "PM note": ("*Marketing, week of", "PM - Monday note"), "CMO brief": ("*CMO brief", "CMO - Monday brief")}
+FRIDAY_PACKS = {1: ["Ops KPI pack"], 2: ["Ops attribution pack", "Paid pack", "Product marketing pack"], 3: ["SEO pack", "Website pack"], 4: ["Content pack", "Customers pack"]}
 KNOWN_FEED_KEYS = {"MSAds_Campaign_Daily": "data-msads-feed", "MSAds_Search_Query": "data-msads-feed"}
 
 
@@ -71,21 +71,25 @@ def feed_rows(text):
     for ln in text.splitlines():
         c = ln.split("\t")
         if c and c[0] == "Tab": on = True; continue
-        if on and len(c) >= 6 and c[0] and c[0] != "":
+        if on and len(c) >= 6 and re.fullmatch(r"[A-Za-z0-9_]+", c[0] or ""):
             rows.append({"tab": c[0], "source": c[1], "newest": c[3], "lag": c[4], "status": c[5].strip()})
-        elif on and not c[0]: break
+        elif on and not c[0].strip(): break
     return rows
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("cmd")
-    for x in ("asof", "channel", "triggers", "feeds", "known", "out"): ap.add_argument("--" + x)
+    for x in ("asof", "channel", "triggers", "feeds", "known", "out", "threads"): ap.add_argument("--" + x)
     a = ap.parse_args()
     d = dt.date.fromisoformat(a.asof); os.makedirs(a.out, exist_ok=True)
     st = _imp("../../strategist/scripts/strategist.py")
     if not a.channel or not os.path.exists(a.channel): print("channel file missing", file=sys.stderr); sys.exit(2)
     msgs = st.parse_slack(open(a.channel, encoding="utf-8").read())
     if not msgs: print("channel unreadable", file=sys.stderr); sys.exit(2)
+    if a.threads:
+        import glob
+        for fn in sorted(glob.glob(os.path.join(a.threads, "thread_*.json"))):
+            msgs += st.parse_slack(open(fn, encoding="utf-8").read())
     known = set(json.load(open(a.known))) if a.known and os.path.exists(a.known) else set()
     issues, rerun = [], []
 
