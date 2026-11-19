@@ -27,7 +27,7 @@ The period is last month (`"month"`); when last month ends a quarter, the scorec
 1. Query D (since the previous weekday) and query C for this year and the two before. Capture to `$W/in/opps.json`
    and `$W/in/lost_<year>.json`.
 2. `python3 $S --mode daily --asof D --in $W/in --out $W/out`.
-3. If `$W/out/slack/00_parent.txt` exists, post it: `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`.
+3. If `$W/out/slack/00_parent.txt` exists, post it: `python3 $R/shared/slack_post.py --weekly $W/out/slack/*.txt` (every file in name order; one reply in the week's Research log thread, see cmo-system, Posting).
    No file = nothing broke a rule: post nothing.
 Use a fresh `$W` for the pack.
 
@@ -44,8 +44,7 @@ Use a fresh `$W` for the pack.
    Owners: Jonathan (spend, goals, Salesforce process), Amanda (channels, content, attribution fixes), Cristina (website,
    SEO), the opp owner (a single opp). Use only numbers that appear in the candidate's `text`. If there are no candidates,
    delete the line. Edit the file with Python (read, replace, write); do not retype the rest of it.
-4. Post: `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt` and keep the `ts`. Then every other file in
-   `$W/out/slack/` in name order with `--thread-ts <ts>`.
+4. Post: `python3 $R/shared/slack_post.py --weekly $W/out/slack/*.txt` (every file in name order; one reply in the week's Research log thread, see cmo-system, Posting).
 5. A post that does not return `"ok": true`: stop posting, and say so in the run line (CLAUDE.md rule 9).
 
 ## 4. Finish

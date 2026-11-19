@@ -22,7 +22,7 @@ Set up: `R=<repo root>; S=$R/.claude/skills/pm/scripts/pm.py; C=$R/shared/captur
    Capture: `python3 $C --tool get_board_items_page --out $W/in/board.json`. If the board can't be read, post
    `:warning: PM did not run: monday.com unavailable` and stop.
 3. `python3 $S --asof D --in $W/in/board.json --out $W/out`. Exit 2 = post `:warning: PM stopped: <message>` and stop.
-4. Post `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`, keep `ts`, then `01_detail.txt` with `--thread-ts <ts>`.
+4. Post: `python3 $R/shared/slack_post.py --weekly $W/out/slack/*.txt` (every file in name order; one reply in the week's Research log thread, see cmo-system, Posting).
    A post without `"ok": true`: stop and say so in the run line.
 5. Finish with one line: `PM D: <open> open, <done> done last week, <overdue> overdue, <stale> stale, <no_owner> no owner`.
 

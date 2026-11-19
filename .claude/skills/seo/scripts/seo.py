@@ -189,7 +189,7 @@ def pack(a):
         if o_now and o_prev:
             lines.append(f"GA4 organic search sessions: {fmt(o_now)} in {label} vs {fmt(o_prev)} in {pl} ({pct(o_now, o_prev):+.0f}%). "
                          "GA4 undercounts since the cookie banner; use Search Console for search volume.")
-    gaps.append("GA4 organic is undercounted by the cookie banner (known, nothing to fix)")
+    gaps.append("GA4 organic is undercounted by the cookie banner (known cause: the cookie banner; Jonathan is working on the banner setting, so use Search Console for search volume until then)")
     # Semrush
     ai = read(os.path.join(a.inp, "audit_info.json"))
     if ai:
@@ -216,7 +216,7 @@ def pack(a):
         lines.append("*Rank tracking (Semrush, 21 keywords):* see thread.")
     out = os.path.join(a.out, "slack"); os.makedirs(out, exist_ok=True)
     gap_t = ("\n:warning: " + "; ".join(gaps)) if gaps else ""
-    head = f":mag: *Website and SEO, {label}* (as of {asof}; review Monday)\n{{TOP_FINDINGS}}\n" + "\n".join(lines[:3]) + gap_t
+    head = f":mag: *SEO, {label}* (as of {asof}; review Monday)\n{{TOP_FINDINGS}}\n" + "\n".join(lines[:3]) + gap_t
     open(os.path.join(out, "00_parent.txt"), "w").write(head)
     open(os.path.join(out, "01_detail.txt"), "w").write("*Detail*\n" + "\n".join(lines))
     json.dump(sorted(hl, key=lambda h: -h["rank"]), open(os.path.join(a.out, "highlights.json"), "w"), indent=1)

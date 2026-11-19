@@ -33,8 +33,7 @@ month; the review Monday is in `review`). If someone asks for the pack by name o
    `• <what, using the candidate's own numbers>. <so what for the goal>. Suggested: <owner and next step>.`
    Owners: Cristina (titles, descriptions, technical fixes), Amanda (content, new pages). Only numbers from the candidate's `text`.
    No candidates = delete the line. Edit the file with Python; do not retype the rest.
-3. Post the parent with `python3 $R/shared/slack_post.py $W/out/slack/00_parent.txt`, keep `ts`, then each other file in
-   `$W/out/slack/` with `--thread-ts <ts>`. A post without `"ok": true`: stop posting and say so in the run line.
+3. Post: `python3 $R/shared/slack_post.py --weekly $W/out/slack/*.txt` (every file in name order; one reply in the week's Research log thread, see cmo-system, Posting). A post without `"ok": true`: stop posting and say so in the run line.
 
 ## 4. Finish
 One line: `SEO D: <month> pack, <n> findings, <posts> posts[, gaps: ...]`.

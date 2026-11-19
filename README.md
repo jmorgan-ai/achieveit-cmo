@@ -14,15 +14,20 @@ a customer or prospect.
 - Separate from the finance agents (`achieveit-cfo`): different repo, bot, channel and environment. No shared code.
 
 ## Agents
-| Agent | Skill | Phase |
-|---|---|---|
-| Shared rules | `cmo-system` | 0 |
-| Marketing Ops (KPIs, attribution checks and performance, budget) | `marketing-ops` | 1 (built; routine in `references/routine.md`) |
-| SEO | `seo` | 1 |
-| PM (board, meetings, follow-ups) | `marketing-pm` | 1 |
-| CMO (weekly brief, monthly review) | `cmo-brief` | 1 |
-| Paid Media; Website and CRO | `paid-media`, `website-cro` | 2 |
-| Content and Social; Product and Customer | `content-social`, `product-customer` | 3 |
+| Agent | Skill |
+|---|---|
+| Shared rules | `cmo-system` |
+| Marketing Ops (KPIs, attribution checks, performance, budget) | `marketing-ops` |
+| Paid | `paid` |
+| SEO; Website and CRO | `seo`, `website` |
+| Content (blog, SEO content, webinars, pillars, social) | `content` |
+| Product Marketing (messaging, positioning, win/loss, competitors) | `product-marketing` |
+| Customers (story candidates) | `customers` |
+| PM (board, weekly status) | `pm` |
+| CMO Strategist (Monday brief, open items log) | `strategist` |
+| Health; Ask CMO | `health`, `ask-cmo` |
+
+Output goes to one quiet channel: the Monday CMO brief, a weekly Research log post whose thread holds every agent's pack, and alerts. See `cmo-system`, Posting.
 
 ## Layout
 | Path | Purpose |

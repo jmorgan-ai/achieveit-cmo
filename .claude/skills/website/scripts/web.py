@@ -101,11 +101,7 @@ def pack(a):
         hl.append({"id": "month", "rank": abs(pct(cur["s"], prev["s"]) or 0),
                    "text": f"GA4 sessions {cur['s']:,.0f} in {label} ({pct(cur['s'], prev['s']):+.0f}% vs {plabel}); key events {cur['k']:,.0f} ({pct(cur['k'], prev['k']):+.0f}%).",
                    "evidence": ev})
-    if yago:
-        lines.append(f"vs {ylabel}: sessions {yago['s']:,.0f} ({pct(cur['s'], yago['s']):+.0f}%), key events {yago['k']:,.0f} ({pct(cur['k'], yago['k']):+.0f}%).")
-        hl.append({"id": "yoy", "rank": abs(pct(cur["s"], yago["s"]) or 0) / 3,
-                   "text": f"GA4 sessions are {pct(cur['s'], yago['s']):+.0f}% vs {ylabel} ({cur['s']:,.0f} vs {yago['s']:,.0f}), so treat GA4 trends as unreliable until tracking is checked.",
-                   "evidence": f"{ev}, {label} and {ylabel}"})
+    # Year-over-year GA4 is left out until the cookie banner undercount is fixed (decision 2026-11-19).
     chs = sorted(cur["ch"].items(), key=lambda kv: -kv[1][0])[:5]
     lines.append("*Channels:* " + "; ".join(f"{k} {v[0]:,.0f} sessions, {v[1]:,.0f} key events" for k, v in chs) + ".")
     # data health: GA4 organic vs Search Console clicks
