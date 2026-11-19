@@ -48,8 +48,8 @@ Purpose: catch anything the team said it would do that was never put on the boar
 - **Notion:** only pages titled "Week of …" under `notion_path_prefix` (Marketing / Marketing Meetings / 2026 Meetings), last week's page only, and
   only its unchecked to-do lines (the meeting action items). Talking points, summaries, notes and transcripts are not read. 1:1 pages, private
   pages and anything else are refused by `gaps.py` (exit 2).
-- **Slack:** only the channels in `team_sources.json` (#marketing-collab; #marketingcrew once its ID is set and the bot is invited), the last 7 days,
-  never DMs or group DMs (`fetch_slack.py` refuses any ID not starting with C).
+- **Slack:** only the channels in `team_sources.json` (#marketing-collab; #marketingcrew, G010S5CC015, private, bot is a member), the last 7 days,
+  never DMs or group DMs (`fetch_slack.py` refuses any ID not starting with C or G (DMs start with D)).
 - **Private topics:** any line about reviews, performance, pay, hiring, time off, health, 1:1s or personal matters is dropped before matching, only counted, never quoted or summarized.
   If a line looks private but passed the filter, leave it out and say nothing about it.
 - **Output:** short neutral task lines with a link to the source, each framed as "add it to the board or drop it". No names beyond what the action item already says, no quotes of discussion, no judgement of people.

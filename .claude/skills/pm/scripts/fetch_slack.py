@@ -2,7 +2,7 @@
 """Read the last N days of the allowlisted team channels, as the CMO bot. Nothing else is ever read.
 
   fetch_slack.py --out slack.json
-Channels come only from references/team_sources.json (public or private channels, IDs starting with C). A DM or group DM ID is refused.
+Channels come only from references/team_sources.json (public or private channels, IDs starting with C or G). A DM or group DM ID is refused.
 No Authorization header: the cloud environment's network proxy adds the bot token. A channel that cannot be read is listed with its
 error, never worked around. Always exits 0 so the PM run continues; the gaps script reports what could not be read.
 """
@@ -27,7 +27,7 @@ def main():
         cid, name = ch.get("id"), ch["name"]
         if not cid:
             out["channels"].append({"name": name, "error": "channel_id_not_set"}); continue
-        if not cid.startswith("C"):
+        if not cid.startswith(("C", "G")):
             out["channels"].append({"name": name, "error": "refused_not_a_channel"}); continue
         try:
             r = api("conversations.history", {"channel": cid, "oldest": oldest, "limit": "200"})

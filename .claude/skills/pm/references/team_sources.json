@@ -4,7 +4,7 @@
   "notion_path_prefix": "Marketing / Marketing Meetings / 2026 Meetings",
   "slack": [
     {"id": "C06FNDPRK6F", "name": "marketing-collab"},
-    {"id": null, "name": "marketingcrew", "note": "private; set the channel ID and invite the CMO bot, then it is read"}
+    {"id": "G010S5CC015", "name": "marketingcrew", "note": "private channel; the CMO bot must be a member"}
   ],
   "days": 7
 }
