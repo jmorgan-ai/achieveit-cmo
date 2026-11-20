@@ -15,10 +15,10 @@ Feeds workbook id is in cmo-system `references/ids.md`. One sheet per `read_reso
 |---|---|---|
 | li_posts.txt | 15 LI_Posts | `python3 $C --tool read_resource --text --match-contains uri=01IJF3MH7JFUTNS7AE3NGLRUZMTQX56HIL --match startPage=15 --out $W/in/li_posts.txt` |
 | li_page.txt | 16 LI_Page_Daily | same, `--match startPage=16` |
-| li_followers.txt | 17 LI_Followers | same, `--match startPage=17` |
+| li_followers.txt | 18 LI_Followers (17 is a blank Sheet1) | same, `--match startPage=18` |
 | buffer_posts.json | Buffer `list_posts` | `list_posts` with organizationId `5a789d8d01a71cee3c1c5351` (My Organization), channelIds `["6061c7c1edd0a87f33ed4ac9"]` (AchieveIt LinkedIn page), status `["sent"]`, `dueAt` start and end = the month in America/Denver (e.g. `2026-10-01T00:00:00-06:00` to `2026-10-31T23:59:59-06:00`), `includeMetrics` true, `first` 100, then `python3 $C --tool list_posts --text --match-contains organizationId=5a789d8d --out $W/in/buffer_posts.json`. Other channels (podcast page, X) are out of scope for now. |
 | gsc_pages.txt | 9 GSC_Pages | same, `--match startPage=9`, `--out $W/in/gsc_pages.txt` |
-| gsc_queries.txt | 8 GSC_Queries | same, `--match startPage=8` |
+| gsc_queries.txt | 8 GSC_Queries | same, `--match startPage=8` (a read is cut at about 190K characters, so only the top rows arrive; the page-two list uses those. Fixing it needs a smaller export in the feed: top rows by impressions) |
 | ga4_landing.txt | 5 GA4_Landing_Pages | same, `--match startPage=5` (cut at about 2,200 rows, highest sessions first) |
 | campaigns.json | Salesforce `soqlQuery` | `SELECT Name, Type, Status, StartDate, NumberOfContacts, NumberOfLeads, NumberOfResponses, NumberOfOpportunities FROM Campaign WHERE (Type = 'Webinar' OR Name LIKE '%Webinar%') AND StartDate >= LAST_N_MONTHS:12 ORDER BY StartDate DESC LIMIT 50`, then `python3 $C --tool soqlQuery --text --match-contains "FROM Campaign" --out $W/in/campaigns.json` |
 | feed_status.txt | 2 Feed_Status | same, `--match startPage=2` |
