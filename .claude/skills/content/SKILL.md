@@ -21,7 +21,7 @@ Set up: `R=<repo root>; S=$R/.claude/skills/content/scripts/content.py; C=$R/sha
 (last month; review Monday in `review`). If someone asks by name on another day, use last month and today's date.
 
 ## 2. Data (`references/routine.md` lists the captures)
-Feed_Status (sheet 2) first; mark any input whose status is not OK as a gap. Then LI_Posts (15), LI_Page_Daily (16), LI_Followers (17), GSC_Pages (9), GSC_Queries (8), GA4_Landing_Pages (5),
+Feed_Status (sheet 2) first; mark any input whose status is not OK as a gap. Then LI_Posts (15), LI_Page_Daily (16), LI_Followers (18), GSC_Pages (9), GSC_Queries (8), GA4_Landing_Pages (5),
 each captured to `$W/in`. Then Buffer sent posts for the month and the Salesforce webinar campaigns (`references/routine.md`). Everything but LI_Posts is optional: if it fails, mark the gap and continue.
 If LI_Posts can't be read, post `:warning: Content pack did not run: LinkedIn feed unavailable` (top level, no `--weekly`) and stop.
 

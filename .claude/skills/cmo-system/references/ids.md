@@ -22,7 +22,8 @@ Folder: Marketing Automation `01IJF3MHZHVQDNNTBHLNFJV5NKED245WIV`. Read with the
 ### Marketing Data Feeds.xlsx tabs (sheet number)
 1 Setup, 2 Feed_Status, 3 GA4_Daily_Channel, 4 GA4_Monthly_Channel, 5 GA4_Landing_Pages, 6 GA4_Key_Events, 7 GSC_Daily,
 8 GSC_Queries, 9 GSC_Pages, 10 GAds_Campaign_Daily, 11 GAds_Search_Terms, 12 GAds_Keywords, 13 MSAds_Campaign_Daily,
-14 MSAds_Search_Query, 15 LI_Posts, 16 LI_Page_Daily, 17 LI_Followers.
+14 MSAds_Search_Query, 15 LI_Posts, 16 LI_Page_Daily, 17 Sheet1 (blank, added 2026-11), 18 LI_Followers.
+If a tab is added or removed these numbers shift: check the tab order against this list before relying on a number (the sheet name is the first line of each read).
 
 ## Salesforce
 - Dashboards: Marketing Attribution (Monthly) `01Z1Q000001I97vUAC`; Marketing Attribution (Quarterly) `01ZHp000001QkU2MAK`.
